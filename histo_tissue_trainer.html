@@ -1,7 +1,118 @@
-
 <!DOCTYPE html>
-<html lang="ru">
-<head>
+<html lang="ru" data-darkreader-mode="dynamic" data-darkreader-scheme="dark"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><style class="darkreader darkreader--fallback" media="screen"></style><style class="darkreader darkreader--user-agent" media="screen">@layer {
+html {
+    background-color: var(--darkreader-background-ffffff, #181a1b) !important;
+}
+html {
+    color-scheme: dark !important;
+}
+iframe {
+    color-scheme: dark !important;
+}
+html, body {
+    background-color: var(--darkreader-background-ffffff, #181a1b);
+}
+html, body {
+    border-color: var(--darkreader-border-4c4c4c, #736b5e);
+    color: var(--darkreader-text-000000, #e8e6e3);
+}
+a {
+    color: var(--darkreader-text-0040ff, #3391ff);
+}
+table {
+    border-color: var(--darkreader-border-808080, #545b5e);
+}
+mark {
+    color: var(--darkreader-text-000000, #e8e6e3);
+}
+::placeholder {
+    color: var(--darkreader-text-a9a9a9, #b2aba1);
+}
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    background-color: var(--darkreader-background-faffbd, #404400) !important;
+    color: var(--darkreader-text-000000, #e8e6e3) !important;
+}
+* {
+    scrollbar-color: var(--darkreader-background-b0b0b0, #454a4d) var(--darkreader-background-f1f1f1, #202324);
+}
+::selection {
+    background-color: var(--darkreader-background-0060d4, #004daa) !important;
+    color: var(--darkreader-text-ffffff, #e8e6e3) !important;
+}
+::-moz-selection {
+    background-color: var(--darkreader-background-0060d4, #004daa) !important;
+    color: var(--darkreader-text-ffffff, #e8e6e3) !important;
+}
+}</style><style class="darkreader darkreader--text" media="screen"></style><style class="darkreader darkreader--invert" media="screen">.jfk-bubble.gtx-bubble, .captcheck_answer_label > input + img, span#closed_text > img[src^="https://www.gstatic.com/images/branding/googlelogo"], span[data-href^="https://www.hcaptcha.com/"] > #icon, img.Wirisformula, a[data-testid="headerMediumLogo"]>svg, .d2l-navigation-link-image-container, .d2l-iframe-loading-container {
+    filter: invert(100%) hue-rotate(180deg) contrast(90%) !important;
+}</style><style class="darkreader darkreader--inline" media="screen">[data-darkreader-inline-bgcolor] {
+  background-color: var(--darkreader-inline-bgcolor) !important;
+}
+[data-darkreader-inline-bgimage] {
+  background-image: var(--darkreader-inline-bgimage) !important;
+}
+[data-darkreader-inline-border] {
+  border-color: var(--darkreader-inline-border) !important;
+}
+[data-darkreader-inline-border-bottom] {
+  border-bottom-color: var(--darkreader-inline-border-bottom) !important;
+}
+[data-darkreader-inline-border-left] {
+  border-left-color: var(--darkreader-inline-border-left) !important;
+}
+[data-darkreader-inline-border-right] {
+  border-right-color: var(--darkreader-inline-border-right) !important;
+}
+[data-darkreader-inline-border-top] {
+  border-top-color: var(--darkreader-inline-border-top) !important;
+}
+[data-darkreader-inline-boxshadow] {
+  box-shadow: var(--darkreader-inline-boxshadow) !important;
+}
+[data-darkreader-inline-color] {
+  color: var(--darkreader-inline-color) !important;
+}
+[data-darkreader-inline-fill] {
+  fill: var(--darkreader-inline-fill) !important;
+}
+[data-darkreader-inline-stroke] {
+  stroke: var(--darkreader-inline-stroke) !important;
+}
+[data-darkreader-inline-outline] {
+  outline-color: var(--darkreader-inline-outline) !important;
+}
+[data-darkreader-inline-stopcolor] {
+  stop-color: var(--darkreader-inline-stopcolor) !important;
+}
+[data-darkreader-inline-bg] {
+  background: var(--darkreader-inline-bg) !important;
+}
+[data-darkreader-inline-border-short] {
+  border: var(--darkreader-inline-border-short) !important;
+}
+[data-darkreader-inline-border-bottom-short] {
+  border-bottom: var(--darkreader-inline-border-bottom-short) !important;
+}
+[data-darkreader-inline-border-left-short] {
+  border-left: var(--darkreader-inline-border-left-short) !important;
+}
+[data-darkreader-inline-border-right-short] {
+  border-right: var(--darkreader-inline-border-right-short) !important;
+}
+[data-darkreader-inline-border-top-short] {
+  border-top: var(--darkreader-inline-border-top-short) !important;
+}
+[data-darkreader-inline-invert] {
+    filter: invert(100%) hue-rotate(180deg);
+}</style><style class="darkreader darkreader--variables" media="screen">:root {
+   --darkreader-neutral-background: var(--darkreader-background-ffffff, #181a1b);
+   --darkreader-neutral-text: var(--darkreader-text-000000, #e8e6e3);
+   --darkreader-selection-background: var(--darkreader-background-0060d4, #004daa);
+   --darkreader-selection-text: var(--darkreader-text-ffffff, #e8e6e3);
+}</style><style class="darkreader darkreader--root-vars" media="screen"></style>
 <meta charset="UTF-8">
 <title>Тренажер по гистологии. Ткани.</title>
 <style>
@@ -60,9 +171,9 @@
         align-items: center;
     }
     .answers li.correct {
+        /* Highlight correct answers only with color.  Do not change font weight. */
         color: green;
         background-color: inherit;
-        font-weight: bold;
     }
     .answers li.incorrect {
         color: red;
@@ -90,8 +201,179 @@
     .question-text {
         margin-bottom: 10px;
     }
-</style>
-</head>
+</style><style class="darkreader darkreader--sync" media="screen"></style>
+<meta name="darkreader" content="3a6b0876a8204daf9bd82896c02beebe"><style class="darkreader darkreader--override" media="screen">.vimvixen-hint {
+    background-color: var(--darkreader-background-ffd76e, #684b00) !important;
+    border-color: var(--darkreader-background-c59d00, #9e7e00) !important;
+    color: var(--darkreader-text-302505, #d7d4cf) !important;
+}
+#vimvixen-console-frame {
+    color-scheme: light !important;
+}
+::placeholder {
+    opacity: 0.5 !important;
+}
+#edge-translate-panel-body,
+.MuiTypography-body1,
+.nfe-quote-text {
+    color: var(--darkreader-neutral-text) !important;
+}
+gr-main-header {
+    background-color: var(--darkreader-background-add8e6, #1b4958) !important;
+}
+.tou-z65h9k,
+.tou-mignzq,
+.tou-1b6i2ox,
+.tou-lnqlqk {
+    background-color: var(--darkreader-neutral-background) !important;
+}
+.tou-75mvi {
+    background-color: var(--darkreader-background-cfecf5, #0f3a47) !important;
+}
+.tou-ta9e87,
+.tou-1w3fhi0,
+.tou-1b8t2us,
+.tou-py7lfi,
+.tou-1lpmd9d,
+.tou-1frrtv8,
+.tou-17ezmgn {
+    background-color: var(--darkreader-background-f5f5f5, #1e2021) !important;
+}
+.tou-uknfeu {
+    background-color: var(--darkreader-background-faedda, #432c09) !important;
+}
+.tou-6i3zyv {
+    background-color: var(--darkreader-background-85c3d8, #245d70) !important;
+}
+div.mermaid-viewer-control-panel .btn {
+    background-color: var(--darkreader-neutral-background);
+    fill: var(--darkreader-neutral-text);
+}
+svg g rect.er {
+    fill: var(--darkreader-neutral-background) !important;
+}
+svg g rect.er.entityBox {
+    fill: var(--darkreader-neutral-background) !important;
+}
+svg g rect.er.attributeBoxOdd {
+    fill: var(--darkreader-neutral-background) !important;
+}
+svg g rect.er.attributeBoxEven {
+    fill: var(--darkreader-selection-background);
+    fill-opacity: 0.8 !important;
+}
+svg rect.er.relationshipLabelBox {
+    fill: var(--darkreader-neutral-background) !important;
+}
+svg g g.nodes rect,
+svg g g.nodes polygon {
+    fill: var(--darkreader-neutral-background) !important;
+}
+svg g rect.task {
+    fill: var(--darkreader-selection-background) !important;
+}
+svg line.messageLine0,
+svg line.messageLine1 {
+    stroke: var(--darkreader-neutral-text) !important;
+}
+div.mermaid .actor {
+    fill: var(--darkreader-neutral-background) !important;
+}
+mitid-authenticators-code-app > .code-app-container {
+    background-color: white !important;
+    padding-top: 1rem;
+}
+iframe#unpaywall[src$="unpaywall.html"] {
+    color-scheme: light !important;
+}
+select {
+    --darkreader-bg--form-control-background-color: rgba(22, 22, 22, 0) !important;
+}
+body#tumblr {
+    --darkreader-bg--secondary-accent: 31, 32, 34 !important;
+    --darkreader-bg--white: 23, 23, 23 !important;
+    --darkreader-text--black: 228, 224, 218 !important;
+}
+:host {
+    --d2l-border-color: var(--darkreader-bg--d2l-color-gypsum) !important;
+    --d2l-button-icon-background-color-hover: var(--darkreader-bg--d2l-color-gypsum) !important;
+    --d2l-color-ferrite: var(--darkreader-neutral-text) !important;
+    --d2l-color-sylvite: var(--darkreader-bg--d2l-color-sylvite) !important;
+    --d2l-dropdown-background-color: var(--darkreader-neutral-background) !important;
+    --d2l-dropdown-border-color: var(--darkreader-border--d2l-color-mica) !important;
+    --d2l-input-backgroud-color: var(--darkreader-neutral-background) !important;
+    --d2l-menu-border-color: var(--darkreader-bg--d2l-color-gypsum) !important;
+    --d2l-tooltip-background-color: var(--darkreader-neutral-background) !important;
+    --d2l-tooltip-border-color: var(--darkreader-bg--d2l-color-gypsum) !important;
+}
+:host([_floating]) .d2l-floating-buttons-container {
+    background-color: var(--darkreader-neutral-background) !important;
+    border-top-color: var(--darkreader-border--d2l-color-mica) !important;
+    opacity: 0.88 !important;
+}
+d2l-card {
+    background: var(--darkreader-neutral-background) !important;
+    border-color: var(--darkreader-border--d2l-color-gypsum) !important;
+}
+d2l-dropdown-content > div,
+d2l-menu-item {
+    background-color: var(--darkreader-neutral-background) !important;
+    border-radius: 10px !important;
+}
+d2l-empty-state-simple {
+    border-color: var(--darkreader-bg--d2l-color-gypsum) !important;
+}
+.d2l-button-filter > ul > li > a.vui-button {
+    border-color: var(--darkreader-border--d2l-color-mica) !important;
+}
+.d2l-label-text:has(.d2l-button-subtle-content):hover,
+.d2l-label-text:has(.d2l-button-subtle-content):focus,
+.d2l-label-text:has(.d2l-button-subtle-content):active {
+    background-color: var(--darkreader-bg--d2l-color-gypsum) !important;
+}
+.d2l-navigation-centerer {
+    color: inherit !important;
+}
+.d2l-tabs-layout {
+    border-color: var(--darkreader-border--d2l-color-gypsum) !important;
+}
+.d2l-input,
+.d2l-calendar-date,
+.d2l-htmleditor-container {
+    background-color: var(--darkreader-neutral-background) !important;
+}
+.d2l-collapsible-panel {
+    border: 1px solid var(--darkreader-border--d2l-color-mica) !important;
+    border-radius: 0.4rem !important;
+}
+.d2l-collapsible-panel-divider {
+    border-bottom: 1px solid var(--darkreader-border--d2l-color-mica) !important;
+}
+.d2l-w2d-flex {
+    border-bottom: 2px solid var(--darkreader-border--d2l-color-mica) !important;
+}
+.d2l-collapsible-panel scrolled,
+.d2l-collapsible-panel-header,
+.d2l-w2d-collection-fixed {
+    background-color: var(--darkreader-neutral-background) !important;
+}
+.d2l-loading-spinner-bg {
+    fill: var(--darkreader-bg--d2l-color-gypsum) !important;
+}
+.d2l-loading-spinner-bg-stroke {
+    stroke: var(--darkreader-border--d2l-color-mica) !important;
+}
+.d2l-loading-spinner-wrapper svg path,
+.d2l-loading-spinner-wrapper svg circle {
+    fill: var(--darkreader-neutral-background) !important;
+}
+.d2l-twopanelselector-side.d2l-twopanelselector-side-sep {
+    background: var(--darkreader-bg--d2l-color-mica) !important;
+}
+.d2l-le-TreeAccordionItem-anchor::before {
+    background: var(--darkreader-bg--d2l-color-corundum) !important;
+}
+embed[type="application/pdf"] { filter: invert(100%) contrast(90%); }</style></head>
 <body>
     <!-- Fixed header container defined in style -->
     <header id="header">
@@ -101,29 +383,29 @@
     <!-- Progress bar (visible only for generated tests) -->
     <div id="progress-wrapper" class="hidden" style="max-width: 900px; margin: 0 auto; padding-top: 10px;">
         <div id="progress-container" style="display: flex; align-items: center;">
-            <div id="progress-bar-container" style="flex: 1; background-color: #e0e0e0; border-radius: 5px; height: 10px;">
-                <div id="progress-bar" style="height: 100%; width: 0%; background-color: #4caf50; border-radius: 5px;"></div>
+            <div id="progress-bar-container" style="flex: 1 1 0%; background-color: rgb(224, 224, 224); border-radius: 5px; height: 10px; --darkreader-inline-bgcolor: var(--darkreader-background-e0e0e0, #2a2d2f);" data-darkreader-inline-bgcolor="">
+                <div id="progress-bar" style="height: 100%; width: 0%; background-color: rgb(76, 175, 80); border-radius: 5px; --darkreader-inline-bgcolor: var(--darkreader-background-4caf50, #3d8c40);" data-darkreader-inline-bgcolor=""></div>
             </div>
             <span id="progress-text" style="margin-left: 10px; font-weight: bold;">0/0</span>
         </div>
     </div>
     <!-- Random test generator (single button) -->
-    <div id="random-test" style="padding: 10px 20px; max-width: 900px; margin-left: auto; margin-right: auto; text-align: center;">
+    <div id="random-test" style="padding: 10px 20px; max-width: 900px; margin-left: auto; margin-right: auto; text-align: center;" class="">
         <button id="generate-btn" style="font-size: 1.2em; padding: 10px 20px;">Сформировать тест</button>
     </div>
 
     <!-- Author note container -->
-    <div id="author-note" style="max-width: 900px; margin: 10px auto; text-align: center; font-size: 0.9em; white-space: pre-line;">
+    <div id="author-note" style="max-width: 900px; margin: 10px auto; text-align: center; font-size: 0.9em; white-space: pre-line;" class="">
         Сделал Артём из группы 104, леч, 2026г.
         Пусть это облегчит вам подготовку к тесту по гисте.
         Информация для теста и его структура взята из актуальной
         на момент создания pdf-ки.
 
         <!-- Updated feedback block: replaced the plane emoji with the official Telegram SVG icon and changed label -->
-        Обратная связь&nbsp;&mdash;&nbsp;
-        <a href="https://t.me/presquevue" target="_blank" style="display:inline-flex; align-items:center; gap:4px; text-decoration:none; color:inherit;">
+        Обратная связь&nbsp;—&nbsp;
+        <a href="https://t.me/presquevue" target="_blank" style="display: inline-flex; align-items: center; gap: 4px; text-decoration: none; color: inherit; --darkreader-inline-color: inherit;" data-darkreader-inline-color="">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09"/>
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.287 5.906q-1.168.486-4.666 2.01-.567.225-.595.442c-.03.243.275.339.69.47l.175.055c.408.133.958.288 1.243.294q.39.01.868-.32 3.269-2.206 3.374-2.23c.05-.012.12-.026.166.016s.042.12.037.141c-.03.129-1.227 1.241-1.846 1.817-.193.18-.33.307-.358.336a8 8 0 0 1-.188.186c-.38.366-.664.64.015 1.088.327.216.589.393.85.571.284.194.568.387.936.629q.14.092.27.187c.331.236.63.448.997.414.214-.02.435-.22.547-.82.265-1.417.786-4.486.906-5.751a1.4 1.4 0 0 0-.013-.315.34.34 0 0 0-.114-.217.53.53 0 0 0-.31-.093c-.3.005-.763.166-2.984 1.09"></path>
             </svg>
             <span>https://t.me/presquevue</span>
         </a>
@@ -131,11 +413,11 @@
 
     <!-- Menu wrapped in a collapsible spoiler -->
     <!-- Added the 'open' attribute so the spoiler is expanded by default. -->
-    <details id="menu-container" style="max-width: 900px; margin-left: auto; margin-right: auto;">
+<details id="menu-container" style="max-width: 900px; margin-left: auto; margin-right: auto;">
         <summary style="cursor: pointer; font-weight: bold; font-size: 1.1em;">Список вопросов</summary>
-        <div id="menu"></div>
+        <div id="menu" class="" style="display: grid;"><button>ВОПРОС №1</button><button>ВОПРОС№2</button><button>ВОПРОС№3</button><button>ВОПРОС№4</button><button>ВОПРОС№5</button><button>ВОПРОС№6</button><button>ВОПРОС№7</button><button>ВОПРОС№8</button><button>ВОПРОС№9</button><button>ВОПРОС№10</button><button>ВОПРОС№11</button><button>ВОПРОС№12</button><button>ВОПРОС№13</button><button>ВОПРОС№14</button><button>ВОПРОС№15</button><button>ВОПРОС№16</button><button>ВОПРОС№17</button><button>ВОПРОС№18</button><button>ВОПРОС№19</button><button>ВОПРОС№20</button><button>ВОПРОС№21</button><button>ВОПРОС№22</button><button>ВОПРОС№23</button><button>ВОПРОС№24</button><button>ВОПРОС№25</button><button>ВОПРОС№26</button><button>ВОПРОС№27</button><button>ВОПРОС№28</button><button>ВОПРОС№29</button><button>ВОПРОС№30</button><button>ВОПРОС№31</button><button>ВОПРОС№32</button></div>
         <!-- Additional controls for showing all questions. When clicked, the list view appears below. -->
-        <button id="show-all-btn" style="margin: 10px auto; display: block;">Показать все вопросы</button>
+        <button id="show-all-btn" style="margin: 10px auto; display: block;" class="">Показать все вопросы</button>
         <!-- Container that will be populated with all questions and their answers. Hidden by default. -->
         <div id="all-questions" class="hidden" style="max-width: 900px; margin: 20px auto;"></div>
     </details>
@@ -586,7 +868,7 @@ const modifications = [
   { num: 162, answers: ["g0 периоде", "g1 периоде", "g2 периоде", "S периоде"], correct: [0, 1, 2, 3] },
   { num: 187, answers: ["увеличение количества дифференцированных клеток в эмбриогенезе", "определение пути развития клеток на генетической основе", "структурное изменение ДНК хромосом", "объединение клеток в целостную систему с установлением между ними специфических взаимоотношений", "особенности клеточно-дифференонной организации тканей"], correct: [1] },
   { num: 188, answers: ["это объединение клеток в целостную систему специализированных клеток", "стойкое структурно-функциональное изменение ранее однородных клеток    с   превращением их в специализированные клетки", "установление механических связей между клетками для их объединения", "появление различных тканей в процессе эмбриогенеза", "реактивные изменения клеток и тканей"], correct: [1] },
-  { num: 190, answers: ["тормозящие развитие их предшественников", "элемент строения ДНК", "специфические белки, входящие в состав хромосом", "клеточные включения", "клеточные органоиды"], correct: [0] },
+  { num: 190, answers: ["тканеспецифические вещества, синтезируемые дифференцированными клетками и тормозящие развитие их предшественников", "элемент строения ДНК", "специфические белки, входящие в состав хромосом", "клеточные включения", "клеточные органоиды"], correct: [0] },
   { num: 196, answers: ["последовательное изменение клеток в составе тканей", "синтез специфических типов белков", "появление в составе тканей различных типов специализированных клеток"], correct: [2] },
   { num: 202, answers: ["способность к самоподдержанию", "способность к делению", "способность части клеток к дифференцировке после деления", "способность к выработке специфических белков"], correct: [0, 1, 2] },
   { num: 203, answers: ["деления клеток", "обратного развития уже дифференцированных клеток", "внутриклеточной регенерации", "превращения из других видов тканей"], correct: [0, 1, 2] },
@@ -676,6 +958,133 @@ const modifications = [
   { num: 549, answers: ["леммоциты", "фибробласты", "коллагеновые волокна", "эластические волокна"], correct: [0, 1, 2, 3] }
 ];
 
+// Mapping of question numbers to corrected question text.  These entries
+// override the decoded question text for questions where the original
+// source merged answer text into the question or otherwise garbled it.
+const questionTexts = {
+  25: "Если клетка содержит удвоенное количество ДНК, то она прошла период клеточного цикла",
+  61: "Если в клетке много органелл связанных рибосом, то это может свидетельствовать о ее:",
+  108: "Процесс расхождения хромосом происходит в течение: интерфазы",
+  109: "Участки хромосом кинетохор, это:",
+  111: "Участки хромосом центромер, это:",
+  112: "Участки хромосом теломер, это:",
+  113: "Участки хромосом спутников хромосом, это:",
+  139: "В состав гликокаликса входят",
+  140: "Плазмолемма обеспечивает такие свойства клеток как",
+  141: "Важнейшими свойствами липидного бислоя мембран являются",
+  142: "Белковые молекулы в мембранах могут",
+  143: "В состав гиалоплазмы входят ферменты метаболизма",
+  144: "Реснички отличаются от микроворсинки тем, что имеют",
+  145: "Универсальными внутриклеточными сигнальными молекулами, изменяющими метаболизм клетки, являются",
+  146: "Регулирующие системы организма воздействуют на клетку путем",
+  147: "Число аутофагосом в клетке возрастает при",
+  148: "Функциями гранулярной эндоплазматической сети являются",
+  149: "Цитоскелет клетки представлен",
+  150: "Количество аутофагосом в клетке увеличивается",
+  151: "Пероксисомы",
+  152: "Наличие в клетке большого количества свободных рибосом свидетельствует о",
+  153: "В образовании ферментов лизосом и их мембран участвуют органеллы",
+  154: "В митохондриях происходит",
+  155: "Хроматин интерфазного ядра содержит",
+  156: "Гистоновые белки хроматина",
+  157: "Клеточное ядро ограничено",
+  158: "В стадии профазы происходит",
+  159: "Нарушение цитомии приводит к",
+  160: "Ядерный белковый матрикс представлен в основном",
+  161: "Дупликация центриолей может происходить в клетках в",
+  162: "В эпидермисе кожи клетки могут находиться в",
+  187: "Детерминация - это",
+  188: "Дифференцировка -",
+  190: "Кейлоны - это",
+  196: "Дифференцировка называется пространственной, если в ее основе лежит",
+  202: "Признаками стволовой клетки являются",
+  203: "Репаративная регенерация эпителия осуществляется путем",
+  204: "Физиологическая регенерация нервной ткани осуществляется путем",
+  205: "К типу гистогенеза с отсутствием клеточной пролиферации и наличием только высокодифференцированных клеток конечной части дифферона относятся ткани",
+  257: "Признаками эпителиальных тканей являются",
+  258: "Секреторные клетки имеются в составе покровного эпителия",
+  259: "Эпителиоциты в совокупности либо отдельно обеспечивают функции",
+  260: "Миоэпителиальные клетки имеются в железах,сформированных эпителием",
+  261: "В многослойном ороговевающем эпителиик митотическому делению способны клетки",
+  262: "Морфологическим проявлением специализации эпителия кишечного типа на всасывании является",
+  263: "Секреторная активность экзокринных желез зависит от влияния",
+  264: "Внутриклеточная регенерация как способ физиологического обновления наиболее типична для желез",
+  301: "Форменные элементы крови нейтрофилы - тинкториальные свойства цитоплазмы по методу Романовского:",
+  302: "Форменные элементы крови эозинофилы - тинкториальные свойства цитоплазмы по методу Романовского:",
+  303: "Форменные элементы крови базофилы - тинкториальные свойства цитоплазмы по методу Романовского:",
+  304: "Форменные элементы крови моноциты - тинкториальные свойства цитоплазмы по методу Романовского:",
+  305: "Форменные элементы крови тромбоциты - тинкториальные свойства цитоплазмы по методу Романовского:",
+  321: "Выберите морфофункциональные признаки эозинофила",
+  322: "Выберите морфологические признаки моноцита",
+  323: "Тромбоциты в своих гранулах содержат",
+  324: "Агглютиногены системы АВО имеются в плазмолеммах",
+  325: "Нейтрофильные гранулоциты способны",
+  326: "При фагоцитозе биологические окислители выделяют",
+  327: "В лимфе в отличие от крови",
+  328: "Все гранулоциты крови",
+  329: "При образовании тромба происходит",
+  361: "Для соединительной ткани плотной оформленной (ориентированной) характерно:",
+  362: "Для соединительной ткани ретикулярной характерно:",
+  363: "Для соединительной ткани слизистой характерно:",
+  364: "Для соединительной ткани плотной неоформленной (ориентированной) характерно:",
+  371: "Коллагеновые волокна - их морфохимическая характеристика:",
+  373: "Эластические волокна - их морфохимическая характеристика:",
+  374: "Протеогликаны - их морфохимическая характеристика:",
+  375: "Гликопротеины - их морфохимическая характеристика:",
+  386: "Фибробласты секретируют",
+  387: "В состав основного вещества соединительных тканей входят",
+  388: "Макрофаги способны к",
+  389: "Коллагеновые волокна отличаются от эластических",
+  390: "Белый и бурый липоциты отличаются по",
+  391: "В регуляции проницаемости соединительной ткани участвуют",
+  392: "Проницаемость соединительной ткани зависит от",
+  393: "Рыхлая волокнистая ткань",
+  444: "Формирующаяся энхондральная кость - ее характерные особенности:",
+  445: "Формирующаяся перихондральная кость - ее характерные особенности:",
+  446: "Формирующийся пузырчатый хрящ - его характерные особенности:",
+  448: "Формирующаяся надкостница - ее характерные особенности:",
+  449: "Успешная гомотрансплантация хряща связана с",
+  450: "Отличительные особенности строения эластического хряща",
+  451: "В состав покровного слоя синовиальной оболочки входят",
+  452: "При старении хрящевой ткани происходит",
+  453: "Надхрящница содержит",
+  454: "Интерстициальный рост хряща обеспечивается",
+  455: "Компактное вещество кости образовано",
+  456: "В трофике костной ткани принимают участие сосуды",
+  457: "Аппозиционный рост хряща обеспечивается",
+  458: "Митотической активностью обладают клетки скелетных тканей",
+  476: "\"Z\" полоски саркомеров обеспечивают",
+  477: "Ткань эпителиальная - характерный признак:",
+  478: "Ткань гладкая мышечная - характерный признак:",
+  479: "Ткань поперечнополосатая скелетная - характерный признак:",
+  480: "Ткань поперечнополосатая сердечная - характерный признак:",
+  496: "Лактация осуществляется:",
+  497: "Скелетная мышечная ткань состоит",
+  498: "В области вставочных дисков сердечной мышцы имеются",
+  499: "Гладкие мышечные клетки способны синтезировать",
+  500: "Для медленных мышечных волокон характерно",
+  501: "Гладкие мышечные клетки, располагаясь пластами, тесно связаны между собой",
+  502: "Сердечная мышечная ткань характеризуется",
+  503: "Репаративный гистогенез скелетной мышечной ткани представлен следующими стадиями",
+  504: "Саркотубулярная сеть (L-система) выполняет следующие функции",
+  519: "Нейроглия, выстилающая сосудистые сплетения желудочного мозга и спинномозговой канал, называется",
+  535: "Часть рефлекторной дуги - двигательной соматической состоит из:",
+  536: "Часть рефлекторной дуги - чувствительной вегетативной состоит из:",
+  537: "Часть рефлекторной дуги - двигательной вегетативной состоит из:",
+  538: "Часть рефлекторной дуги - ассоциативной вегетативной состоит из:",
+  539: "Нервные окончания свободные - характерные признаки:",
+  540: "Нервные окончания пластинчатого тельца - характерные признаки:",
+  541: "Нервные окончания осязательного тельца - характерные признаки:",
+  542: "Нервно-мышечное веретено - характерные признаки:",
+  543: "Нервно-мышечное окончание - характерные признаки:",
+  544: "В нервной ткани астроциты выполняют функции",
+  545: "В поддержании синаптической функции нейрона участвуют",
+  546: "Нейрофибриллы в нервных клетках соответствуют",
+  547: "Тормозными медиаторами нервной системы являются",
+  548: "Рецепторные нервные окончания располагаются в",
+  549: "В состав пластинчатого тельца (барорецептора) входят"
+};
+
 // Immediately apply the corrections above to the decoded data.  We
 // flatten all questions (preserving original order) and overwrite
 // answers and correct indices for the specified question numbers.
@@ -687,8 +1096,26 @@ const modifications = [
   modifications.forEach(mod => {
     const idx = mod.num - 1;
     if (idx >= 0 && idx < allQuestions.length) {
-      allQuestions[idx].answers = mod.answers;
-      allQuestions[idx].correct = mod.correct;
+      // Apply answer and correctness overrides
+      if (mod.answers) {
+        allQuestions[idx].answers = mod.answers;
+      }
+      if (mod.correct) {
+        allQuestions[idx].correct = mod.correct;
+      }
+      // If a corrected question text is provided on the modification
+      if (mod.q) {
+        allQuestions[idx].q = mod.q;
+      }
+    }
+  });
+  // Apply question text corrections from the questionTexts mapping.  If a
+  // mapping exists for a given question number, override the decoded
+  // question text to ensure it matches the reference wording.
+  Object.keys(questionTexts).forEach(numStr => {
+    const idx2 = parseInt(numStr, 10) - 1;
+    if (idx2 >= 0 && idx2 < allQuestions.length) {
+      allQuestions[idx2].q = questionTexts[numStr];
     }
   });
 })();
@@ -1143,5 +1570,6 @@ showAllBtn.addEventListener('click', () => {
 });
 buildMenu();
 </script>
-</body>
-</html>
+
+
+</body></html>
