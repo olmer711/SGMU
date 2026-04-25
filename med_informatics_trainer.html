@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -142,6 +142,12 @@
     <!-- Random test generator (single button) -->
     <div id="random-test" style="padding: 10px 20px; max-width: 900px; margin-left: auto; margin-right: auto; text-align: center;" class="">
         <button id="generate-btn" style="font-size: 1.2em; padding: 10px 20px;">Сформировать тест</button>
+        <!-- New range test controls -->
+        <div style="margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+            <!-- Input for specifying range; placeholder uses grey colour by default -->
+            <input id="range-input" type="text" placeholder="1-418" style="padding: 6px 8px; min-width: 120px;" />
+            <button id="range-btn" style="padding: 8px 12px;">Сформировать тест в диапазоне</button>
+        </div>
         <!-- Test coverage info -->
         <div id="coverage-info" style="margin-top: 10px; font-size: 0.9em;"></div>
     </div>
@@ -226,6 +232,9 @@ const scoreDiv = document.getElementById('score');
 const randomDiv = document.getElementById('random-test');
 const generateBtn = document.getElementById('generate-btn');
 const finishBtn = document.getElementById('finish-btn');
+// Elements for range test generator
+const rangeBtn = document.getElementById('range-btn');
+const rangeInput = document.getElementById('range-input');
 // Grade message container
 const gradeDiv = document.getElementById('grade-message');
 // Progress bar elements
@@ -496,6 +505,79 @@ function startRandomTest(count) {
 // Removed deprecated startSingleQuestionTest function
 
 // Removed deprecated updateCoverageInfo function
+// Start a test by selecting all questions whose ids fall within [startId, endId]
+function startRangeTest(startId, endId) {
+    // Collect matching questions into a single array
+    const selected = [];
+    data.forEach(sec => {
+        sec.questions.forEach(q => {
+            const qId = (typeof q.id === 'number') ? q.id : null;
+            if (qId !== null && qId >= startId && qId <= endId) {
+                // Preserve all relevant fields to support different question types
+                const newQ = { id: q.id, type: q.type, q: q.q };
+                if (Array.isArray(q.answers)) {
+                    newQ.answers = q.answers.slice();
+                }
+                if (Array.isArray(q.left)) {
+                    newQ.left = q.left.slice();
+                }
+                if (Array.isArray(q.right)) {
+                    newQ.right = q.right.slice();
+                }
+                if (Array.isArray(q.options)) {
+                    newQ.options = q.options.slice();
+                }
+                if (typeof q.correct === 'object' && !Array.isArray(q.correct)) {
+                    newQ.correct = Object.assign({}, q.correct);
+                } else if (Array.isArray(q.correct)) {
+                    newQ.correct = q.correct.slice();
+                } else {
+                    newQ.correct = q.correct;
+                }
+                // Copy numbering info if present
+                if (q.sectionNumber) newQ.sectionNumber = q.sectionNumber;
+                if (q.questionNumber) newQ.questionNumber = q.questionNumber;
+                selected.push(newQ);
+            }
+        });
+    });
+    // Sort questions by id to present them in ascending order
+    selected.sort((a, b) => {
+        const idA = (typeof a.id === 'number') ? a.id : 0;
+        const idB = (typeof b.id === 'number') ? b.id : 0;
+        return idA - idB;
+    });
+    if (selected.length === 0) {
+        alert('В заданном диапазоне нет вопросов.');
+        return;
+    }
+    // Create a temporary section for the range test; include range in title for clarity
+    const title = 'Тест по вопросам ' + startId + '–' + endId;
+    currentSection = { title: title, questions: selected };
+    currentQuestionIndex = 0;
+    score = 0;
+    questionsAttempted = 0;
+    // Hide menu and random test generator
+    menuDiv.classList.add('hidden');
+    menuDiv.style.display = 'none';
+    randomDiv.classList.add('hidden');
+    resultDiv.classList.add('hidden');
+    // Hide feedback/author note and the menu container during the test
+    authorNote.classList.add('hidden');
+    menuContainer.classList.add('hidden');
+    // Show quiz section
+    quizDiv.classList.remove('hidden');
+    // Show finish button
+    finishBtn.classList.remove('hidden');
+    // Set section title
+    sectionTitle.textContent = currentSection.title;
+    // Reset and show the progress bar
+    progressWrapper.classList.remove('hidden');
+    progressBar.style.width = '0%';
+    progressText.textContent = '0 / ' + currentSection.questions.length;
+    // Start the first question
+    showQuestion();
+}
 
 // Finish the current test early and show partial result
 function finishTest() {
@@ -945,6 +1027,38 @@ retryBtn.addEventListener('click', () => {
 generateBtn.addEventListener('click', () => {
     // Always generate a test consisting of 45 randomly selected questions from the entire pool
     startRandomTest(45);
+});
+
+// Handle generation of a test within a specified id range
+rangeBtn.addEventListener('click', () => {
+    const value = rangeInput.value.trim();
+    // Use placeholder if the input is empty
+    const inputStr = value.length > 0 ? value : rangeInput.placeholder;
+    const match = inputStr.match(/^\s*(\d+)\s*-\s*(\d+)\s*$/);
+    if (!match) {
+        alert('Введите диапазон в формате “start-end”, например 1-100.');
+        return;
+    }
+    let startId = parseInt(match[1], 10);
+    let endId = parseInt(match[2], 10);
+    // Swap if startId > endId
+    if (startId > endId) {
+        const tmp = startId;
+        startId = endId;
+        endId = tmp;
+    }
+    // Define allowed bounds
+    const minId = 1;
+    const maxId = 418;
+    // Validate range does not fall completely outside the allowed bounds
+    if (endId < minId || startId > maxId) {
+        alert('Диапазон вне допустимых границ 1‑418.');
+        return;
+    }
+    // Clamp to allowed boundaries
+    if (startId < minId) startId = minId;
+    if (endId > maxId) endId = maxId;
+    startRangeTest(startId, endId);
 });
 
 // Handle finishing the test early
