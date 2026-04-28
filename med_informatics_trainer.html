@@ -997,7 +997,7 @@ retryBtn.addEventListener('click', () => {
     resultDiv.classList.add('hidden');
     // If we are in a generated test, generate a fresh test
     if (currentSection && currentSection.title === 'Сформированный тест') {
-        startGeneratedTest();
+        startRandomTest(45);
         return;
     }
     // If there is a remembered section index, restart that section to get a new run
