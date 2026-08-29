@@ -1133,6 +1133,7 @@
     .fatty-result-notation { margin: 0; color: #c4d7e8; font-size: .78rem; line-height: 1.5; }
 
     .toast {
+      display: none !important;
       position: fixed;
       left: 50%;
       bottom: 22px;
@@ -2041,10 +2042,10 @@
     <div class="layout sugar-layout" id="sugarLayout" hidden>
       <aside class="palette sugar-palette">
         <div class="mobile-drawer-head">
-          <strong>Редактирование</strong>
-          <button class="btn mobile-drawer-close" id="closeSugarPaletteButton" type="button" aria-label="Закрыть панель редактирования">×</button>
+          <strong>Форма</strong>
+          <button class="btn mobile-drawer-close" id="closeSugarPaletteButton" type="button" aria-label="Закрыть панель формы">×</button>
         </div>
-        <div class="section-title">Редактировать</div>
+        <div class="section-title">Форма</div>
         <div class="projection-buttons" role="tablist" aria-label="Редактируемая проекция моносахарида">
           <button class="sugar-choice active" id="fischerProjectionButton" type="button" data-sugar-projection="fischer" role="tab" aria-selected="true"><strong>Фишер</strong><span>линейная форма</span></button>
           <button class="sugar-choice" id="haworthProjectionButton" type="button" data-sugar-projection="haworth" role="tab" aria-selected="false"><strong>Хеуорс</strong><span>циклическая форма</span></button>
@@ -3160,7 +3161,7 @@
       }
 
       function updatePaletteButtonLabel() {
-        var label = activeMode === "sugar" ? "Редактирование" : activeMode === "fatty" ? "Цепь" : "Аминокислоты";
+        var label = activeMode === "sugar" ? "Форма" : activeMode === "fatty" ? "Цепь" : "Аминокислоты";
         mobilePaletteButton.textContent = label;
         mobilePaletteButton.setAttribute("aria-label", "Открыть панель: " + label);
       }
