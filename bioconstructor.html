@@ -917,6 +917,16 @@
       background: radial-gradient(circle at 50% 48%, rgba(29,58,83,.62), rgba(7,17,31,.35) 64%);
     }
 
+    .haworth-canvas {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: var(--haworth-view-width, 640px);
+      height: var(--haworth-view-height, 470px);
+      transform: translate(-50%, -50%) scale(1);
+      transform-origin: center;
+    }
+
     .haworth-ring-svg {
       position: absolute;
       inset: 0;
@@ -1783,8 +1793,8 @@
 
       .haworth-shell { min-width: 0; min-height: auto; padding: 15px 8px 28px; }
       .haworth-builder { width: min(420px, 100%); padding: 14px 8px 18px; border-radius: 16px; }
-      .haworth-stage { min-height: 430px; border-radius: 13px; }
-      .haworth-slot { width: 70px; min-height: 44px; padding: 3px 4px; font-size: .72rem; }
+      .haworth-stage { min-height: 350px; border-radius: 13px; }
+      .haworth-slot { width: 112px; min-height: 72px; padding: 4px 6px; font-size: 1.2rem; }
       .haworth-atom-label { font-size: 22px; }
       .haworth-oxygen-label { font-size: 27px; }
 
@@ -2611,6 +2621,10 @@
         d_fructose: {
           biochem: "Кетогексоза пищевого происхождения; метаболизируется преимущественно в печени и входит в состав сахарозы.",
           medical: "Дефицит альдолазы B вызывает наследственную непереносимость фруктозы."
+        },
+        d_altro_hept_2_ulose: {
+          biochem: "Также известна как D-седогептулоза; её 7-фосфат является промежуточным метаболитом пентозофосфатного пути.",
+          medical: "Основное учебное значение — распознавание кетогептозы и её стереохимии в проекции Фишера."
         }
       };
 
@@ -2664,6 +2678,66 @@
       registerDAndL("sorbose", "сорбоза", "ketose", 6, ["R", "L", "R"]);
       registerDAndL("tagatose", "тагатоза", "ketose", 6, ["L", "L", "R"]);
 
+      // Для гептоз ИЮПАК использует систематические конфигурационные префиксы.
+      // У альдогептоз C2-C5 задаются префиксом гексозы, а C6 — префиксом глицеро.
+      var HEXOSE_CONFIGURATION_SERIES = [
+        { id: "allo", ru: "алло", pattern: ["R", "R", "R", "R"] },
+        { id: "altro", ru: "альтро", pattern: ["L", "R", "R", "R"] },
+        { id: "gluco", ru: "глюко", pattern: ["R", "L", "R", "R"] },
+        { id: "manno", ru: "манно", pattern: ["L", "L", "R", "R"] },
+        { id: "gulo", ru: "гуло", pattern: ["R", "R", "L", "R"] },
+        { id: "ido", ru: "идо", pattern: ["L", "R", "L", "R"] },
+        { id: "galacto", ru: "галакто", pattern: ["R", "L", "L", "R"] },
+        { id: "talo", ru: "тало", pattern: ["L", "L", "L", "R"] }
+      ];
+
+      HEXOSE_CONFIGURATION_SERIES.forEach(function (series) {
+        // D-глицеро-D/L-...-гептозы и их L-зеркальные формы.
+        registerDAndL(
+          "glycero_d_" + series.id + "_heptose",
+          "глицеро-D-" + series.ru + "-гептоза",
+          "aldose",
+          7,
+          series.pattern.concat(["R"])
+        );
+        registerDAndL(
+          "glycero_l_" + series.id + "_heptose",
+          "глицеро-L-" + series.ru + "-гептоза",
+          "aldose",
+          7,
+          mirrorSugarPattern(series.pattern).concat(["R"])
+        );
+      });
+
+      // У 2-кетогептоз четыре хиральных центра (C3-C6): полный ряд из 16 форм.
+      HEXOSE_CONFIGURATION_SERIES.forEach(function (series) {
+        if (series.id === "altro") {
+          registerSugar(
+            "d_altro_hept_2_ulose",
+            "D-альтро-гепт-2-улоза (седогептулоза)",
+            "ketose",
+            7,
+            series.pattern,
+            SUGAR_DETAILS.d_altro_hept_2_ulose
+          );
+          registerSugar(
+            "l_altro_hept_2_ulose",
+            "L-альтро-гепт-2-улоза",
+            "ketose",
+            7,
+            mirrorSugarPattern(series.pattern)
+          );
+          return;
+        }
+        registerDAndL(
+          series.id + "_hept_2_ulose",
+          series.ru + "-гепт-2-улоза",
+          "ketose",
+          7,
+          series.pattern
+        );
+      });
+
       var SUGAR_IDS = Object.keys(SUGARS);
       SUGAR_IDS.forEach(function (id) {
         var sugar = SUGARS[id];
@@ -2672,6 +2746,8 @@
           throw new Error("Сахар " + id + ": некорректная стереохимическая запись");
         }
       });
+      // Гептозы доступны для самостоятельной сборки, но не входят в учебные задания.
+      var SUGAR_CHALLENGE_IDS = SUGAR_IDS.filter(function (id) { return SUGARS[id].carbons < 7; });
 
       var HAWORTH_TEMPLATES = {
         aldohexopyranose: {
@@ -4947,6 +5023,7 @@
         closeSugarInspector();
         closeFattyInspector();
         closePalette();
+        if (sugarActive) fitHaworthStage();
         if (sugarActive) showToast("Режим: сахариды");
         else if (fattyActive) showToast("Режим: жирные кислоты");
         else showToast("Режим: аминокислоты");
@@ -5350,7 +5427,7 @@
       }
 
       function giveSugarChallenge() {
-        if (!sugarChallengeBag.length) sugarChallengeBag = shuffledChallengeBag(SUGAR_IDS, lastSugarChallengeId);
+        if (!sugarChallengeBag.length) sugarChallengeBag = shuffledChallengeBag(SUGAR_CHALLENGE_IDS, lastSugarChallengeId);
         var next = sugarChallengeBag.pop();
         lastSugarChallengeId = next;
         targetSugarId = next;
@@ -5447,6 +5524,15 @@
         return pieces.join("");
       }
 
+      function fitHaworthStage() {
+        var canvas = haworthStage.querySelector(".haworth-canvas");
+        if (!canvas || !haworthTemplateId || !haworthStage.clientWidth || !haworthStage.clientHeight) return;
+        var template = HAWORTH_TEMPLATES[haworthTemplateId];
+        var geometry = HAWORTH_GEOMETRY[template.ring];
+        var scale = Math.min(haworthStage.clientWidth / geometry.viewWidth, haworthStage.clientHeight / geometry.viewHeight);
+        canvas.style.transform = "translate(-50%, -50%) scale(" + clamp(scale, .1, 2) + ")";
+      }
+
       function haworthSlot(template, geometry, index, direction, nextEmptyIndex) {
         var position = template.positions[index];
         var selected = haworthDirections[index];
@@ -5475,12 +5561,15 @@
         haworthEmptyHint.hidden = true;
         haworthBuilder.hidden = false;
         haworthTitle.textContent = template.title;
-        var html = haworthSvg(template, geometry);
+        var html = "<div class=\"haworth-canvas\" style=\"--haworth-view-width:" + geometry.viewWidth + "px;--haworth-view-height:" + geometry.viewHeight + "px\">";
+        html += haworthSvg(template, geometry);
         template.positions.forEach(function (_, index) {
           html += haworthSlot(template, geometry, index, "up", nextEmptyIndex);
           html += haworthSlot(template, geometry, index, "down", nextEmptyIndex);
         });
+        html += "</div>";
         haworthStage.innerHTML = html;
+        fitHaworthStage();
         haworthStage.querySelectorAll(".haworth-slot").forEach(function (button) {
           button.addEventListener("click", function () {
             setHaworthGroup(Number(button.dataset.haworthIndex), button.dataset.direction);
@@ -5911,7 +6000,7 @@
         if (activeMode === "amino" && event.key === "2") setBondOrder(2);
       });
 
-      window.addEventListener("resize", function () { cancelChemMenu(); syncStageGeometry(); scheduleMobileAssemblyFit(); drawBonds(); });
+      window.addEventListener("resize", function () { cancelChemMenu(); syncStageGeometry(); scheduleMobileAssemblyFit(); fitHaworthStage(); drawBonds(); });
       workspace.addEventListener("scroll", function () { cancelChemMenu(); drawBonds(); }, { passive: true });
       function handleMobileChange(event) {
         updatePaletteInteractionMode();
