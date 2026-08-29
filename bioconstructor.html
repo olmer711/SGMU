@@ -1209,6 +1209,8 @@
     .mobile-only,
     .mobile-info-btn,
     .mobile-action-btn,
+    .mobile-palette-button,
+    .mobile-drawer-head,
     .drawer-head,
     .mobile-tools,
     .drawer-backdrop { display: none; }
@@ -1692,6 +1694,172 @@
       .fatty-stage { min-height: 350px; }
       .fatty-svg { height: 350px; }
     }
+
+    @media (orientation: portrait) and (max-width: 900px) {
+      #aminoLayout,
+      .sugar-layout,
+      .fatty-layout {
+        grid-template-rows: minmax(0, 1fr);
+      }
+
+      .mobile-palette-button {
+        position: fixed;
+        left: 0;
+        top: 50%;
+        z-index: 135;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        min-height: 118px;
+        padding: 10px 5px;
+        border: 1px solid #2dd4bf;
+        border-left: 0;
+        border-radius: 0 13px 13px 0;
+        background: #0f5e5a;
+        color: #ecfeff;
+        box-shadow: 0 8px 24px rgba(0,0,0,.32);
+        cursor: pointer;
+        font-size: .72rem;
+        font-weight: 850;
+        line-height: 1.1;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        transform: translateY(-50%);
+        touch-action: manipulation;
+      }
+
+      .mobile-palette-button[aria-expanded="true"] {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .mobile-drawer-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 0 0 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #2a405b;
+      }
+
+      .mobile-drawer-head strong {
+        color: #e8f0f7;
+        font-size: 1rem;
+      }
+
+      .mobile-drawer-close {
+        min-width: 42px;
+        min-height: 42px;
+        padding: 0;
+        font-size: 1.35rem;
+      }
+
+      .amino-presets,
+      .palette,
+      .sugar-palette,
+      .fatty-palette {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 130;
+        display: block;
+        width: min(88vw, 360px);
+        height: 100dvh;
+        max-height: none;
+        margin: 0;
+        padding: max(12px, env(safe-area-inset-top)) 12px max(14px, env(safe-area-inset-bottom));
+        overflow-x: hidden;
+        overflow-y: auto;
+        border: 0;
+        border-right: 1px solid #35506f;
+        box-shadow: 18px 0 50px rgba(0,0,0,.5);
+        transform: translateX(-105%);
+        transition: transform .22s ease;
+      }
+
+      .amino-presets.open,
+      .palette.open,
+      .sugar-palette.open,
+      .fatty-palette.open {
+        transform: translateX(0);
+      }
+
+      .amino-presets .section-title,
+      .palette > .section-title,
+      .sugar-palette > .section-title,
+      .fatty-palette > .section-title {
+        display: block;
+      }
+
+      .amino-preset-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+        overflow: visible;
+      }
+
+      .amino-preset-group {
+        min-width: 0;
+      }
+
+      .amino-preset-list {
+        grid-template-columns: 1fr;
+        gap: 7px;
+      }
+
+      .amino-preset-button {
+        height: auto;
+        min-height: 46px;
+        padding: 7px 6px;
+        font-size: .72rem;
+        line-height: 1.12;
+      }
+
+      .amino-presets .floating-help {
+        display: block;
+        margin-top: 14px;
+      }
+
+      .sugar-palette,
+      .fatty-palette {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .sugar-palette .projection-buttons,
+      .sugar-palette .sugar-type-buttons,
+      .sugar-palette .carbon-count-grid,
+      .sugar-palette .haworth-scaffold-grid,
+      .fatty-palette .fatty-preset-grid {
+        display: grid;
+      }
+
+      .sugar-palette .projection-buttons,
+      .sugar-palette .sugar-type-buttons {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .sugar-palette .carbon-count-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .sugar-palette .haworth-scaffold-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .fatty-palette .fatty-preset-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .inspector {
+        width: min(88vw, 370px);
+        max-height: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1734,6 +1902,10 @@
 
     <div class="layout" id="aminoLayout">
       <aside class="amino-presets" aria-label="Готовые аминокислоты">
+        <div class="mobile-drawer-head">
+          <strong>Аминокислоты</strong>
+          <button class="btn mobile-drawer-close" id="closeAminoPaletteButton" type="button" aria-label="Закрыть панель аминокислот">×</button>
+        </div>
         <div class="section-title">Аминокислоты</div>
         <div class="amino-preset-grid" id="aminoPresetGrid"></div>
         <div class="floating-help">
@@ -1797,6 +1969,10 @@
 
     <div class="layout sugar-layout" id="sugarLayout" hidden>
       <aside class="palette sugar-palette">
+        <div class="mobile-drawer-head">
+          <strong>Редактирование</strong>
+          <button class="btn mobile-drawer-close" id="closeSugarPaletteButton" type="button" aria-label="Закрыть панель редактирования">×</button>
+        </div>
         <div class="section-title">Редактировать</div>
         <div class="projection-buttons" role="tablist" aria-label="Редактируемая проекция моносахарида">
           <button class="sugar-choice active" id="fischerProjectionButton" type="button" data-sugar-projection="fischer" role="tab" aria-selected="true"><strong>Фишер</strong><span>линейная форма</span></button>
@@ -1919,6 +2095,10 @@
 
     <div class="layout fatty-layout" id="fattyLayout" hidden>
       <aside class="palette fatty-palette">
+        <div class="mobile-drawer-head">
+          <strong>Редактирование</strong>
+          <button class="btn mobile-drawer-close" id="closeFattyPaletteButton" type="button" aria-label="Закрыть панель редактирования">×</button>
+        </div>
         <div class="section-title">Длина главной цепи</div>
         <select class="fatty-select" id="fattyCarbonSelect" aria-label="Число атомов углерода в главной цепи">
           <option value="" selected>Выберите длину</option>
@@ -2035,6 +2215,7 @@
     </div>
   </div>
 
+  <button class="mobile-palette-button" id="mobilePaletteButton" type="button" aria-label="Открыть панель аминокислот" aria-expanded="false">Аминокислоты</button>
   <button class="drawer-backdrop" id="drawerBackdrop" type="button" aria-label="Закрыть панель" hidden></button>
   <button class="drawer-backdrop" id="sugarDrawerBackdrop" type="button" aria-label="Закрыть панель сахаридов" hidden></button>
   <button class="drawer-backdrop" id="fattyDrawerBackdrop" type="button" aria-label="Закрыть панель жирных кислот" hidden></button>
@@ -2680,6 +2861,13 @@
       var mobileInfoButton = document.getElementById("mobileInfoButton");
       var closeInspectorButton = document.getElementById("closeInspectorButton");
       var drawerBackdrop = document.getElementById("drawerBackdrop");
+      var mobilePaletteButton = document.getElementById("mobilePaletteButton");
+      var aminoPalette = document.querySelector(".amino-presets");
+      var sugarPalette = document.querySelector(".sugar-palette");
+      var fattyPalette = document.querySelector(".fatty-palette");
+      var closeAminoPaletteButton = document.getElementById("closeAminoPaletteButton");
+      var closeSugarPaletteButton = document.getElementById("closeSugarPaletteButton");
+      var closeFattyPaletteButton = document.getElementById("closeFattyPaletteButton");
       var mobileFormSelect = document.getElementById("mobileFormSelect");
       var toast = document.getElementById("toast");
       var welcomeOverlay = document.getElementById("welcomeOverlay");
@@ -2888,8 +3076,50 @@
         return Math.hypot(event.clientX - centerX, event.clientY - centerY) <= 18;
       }
 
+      function getActivePalette() {
+        return activeMode === "sugar" ? sugarPalette : activeMode === "fatty" ? fattyPalette : aminoPalette;
+      }
+
+      function getActiveDrawerBackdrop() {
+        return activeMode === "sugar" ? sugarDrawerBackdrop : activeMode === "fatty" ? fattyDrawerBackdrop : drawerBackdrop;
+      }
+
+      function updatePaletteButtonLabel() {
+        var label = activeMode === "sugar" ? "Редактирование" : activeMode === "fatty" ? "Цепь" : "Аминокислоты";
+        mobilePaletteButton.textContent = label;
+        mobilePaletteButton.setAttribute("aria-label", "Открыть панель: " + label);
+      }
+
+      function openPalette() {
+        if (!isMobileMode()) return;
+        closeInspector();
+        closeSugarInspector();
+        closeFattyInspector();
+        var palette = getActivePalette();
+        var backdrop = getActiveDrawerBackdrop();
+        palette.classList.add("open");
+        backdrop.hidden = false;
+        requestAnimationFrame(function () { backdrop.classList.add("open"); });
+        mobilePaletteButton.setAttribute("aria-expanded", "true");
+      }
+
+      function closePalette() {
+        aminoPalette.classList.remove("open");
+        sugarPalette.classList.remove("open");
+        fattyPalette.classList.remove("open");
+        mobilePaletteButton.setAttribute("aria-expanded", "false");
+        updatePaletteButtonLabel();
+        [drawerBackdrop, sugarDrawerBackdrop, fattyDrawerBackdrop].forEach(function (backdrop) {
+          backdrop.classList.remove("open");
+          setTimeout(function () {
+            if (!backdrop.classList.contains("open")) backdrop.hidden = true;
+          }, 230);
+        });
+      }
+
       function openInspector() {
         if (!isMobileMode()) return;
+        closePalette();
         drawerBackdrop.hidden = false;
         inspector.classList.add("open");
         drawerBackdrop.classList.add("open");
@@ -3626,7 +3856,10 @@
             button.className = "amino-preset-button"; button.type = "button"; button.dataset.aminoPreset = id;
             button.textContent = acid.name; button.title = acid.name + " · " + acid.three;
             button.setAttribute("aria-label", "Показать аминокислоту: " + acid.name);
-            button.addEventListener("click", function () { loadAminoPreset(id); }); list.appendChild(button);
+            button.addEventListener("click", function () {
+              loadAminoPreset(id);
+              if (isMobileMode()) closePalette();
+            }); list.appendChild(button);
           });
           section.appendChild(list); aminoPresetGrid.appendChild(section);
         });
@@ -4149,6 +4382,7 @@
 
       function openSugarInspector() {
         if (!isMobileMode()) return;
+        closePalette();
         sugarInspector.classList.add("open");
         sugarDrawerBackdrop.hidden = false;
         requestAnimationFrame(function () { sugarDrawerBackdrop.classList.add("open"); });
@@ -4502,6 +4736,7 @@
 
       function openFattyInspector() {
         if (!isMobileMode()) return;
+        closePalette();
         fattyInspector.classList.add("open");
         fattyDrawerBackdrop.hidden = false;
         requestAnimationFrame(function () { fattyDrawerBackdrop.classList.add("open"); });
@@ -4539,6 +4774,7 @@
         closeInspector();
         closeSugarInspector();
         closeFattyInspector();
+        closePalette();
         if (sugarActive) showToast("Режим: сахариды");
         else if (fattyActive) showToast("Режим: жирные кислоты");
         else showToast("Режим: аминокислоты");
@@ -5427,9 +5663,16 @@
       bindMobileFirstControl(document.getElementById("resetButton"), clearAll);
       formSelect.addEventListener("change", function () { applyForm(formSelect.value); });
       mobileFormSelect.addEventListener("change", function () { applyForm(mobileFormSelect.value); });
+      mobilePaletteButton.addEventListener("click", function () {
+        if (mobilePaletteButton.getAttribute("aria-expanded") === "true") closePalette();
+        else openPalette();
+      });
+      closeAminoPaletteButton.addEventListener("click", closePalette);
+      closeSugarPaletteButton.addEventListener("click", closePalette);
+      closeFattyPaletteButton.addEventListener("click", closePalette);
       mobileInfoButton.addEventListener("click", openInspector);
       closeInspectorButton.addEventListener("click", closeInspector);
-      drawerBackdrop.addEventListener("click", closeInspector);
+      drawerBackdrop.addEventListener("click", function () { closePalette(); closeInspector(); });
       document.querySelectorAll("[data-sugar-projection]").forEach(function (button) {
         button.addEventListener("click", function () { setSugarProjection(button.dataset.sugarProjection); });
       });
@@ -5454,7 +5697,7 @@
       document.getElementById("sugarClearButton").addEventListener("click", resetSugarToStart);
       sugarMobileInfoButton.addEventListener("click", openSugarInspector);
       document.getElementById("sugarCloseInspectorButton").addEventListener("click", closeSugarInspector);
-      sugarDrawerBackdrop.addEventListener("click", closeSugarInspector);
+      sugarDrawerBackdrop.addEventListener("click", function () { closePalette(); closeSugarInspector(); });
       fattyCarbonSelect.addEventListener("change", function () {
         if (!fattyCarbonSelect.value) {
           returnFattyToStartScreen();
@@ -5472,7 +5715,7 @@
       document.getElementById("fattyClearButton").addEventListener("click", resetFattyToStart);
       fattyMobileInfoButton.addEventListener("click", openFattyInspector);
       document.getElementById("fattyCloseInspectorButton").addEventListener("click", closeFattyInspector);
-      fattyDrawerBackdrop.addEventListener("click", closeFattyInspector);
+      fattyDrawerBackdrop.addEventListener("click", function () { closePalette(); closeFattyInspector(); });
       welcomeCloseButton.addEventListener("click", function () {
         welcomeOverlay.classList.add("dismissed");
         welcomeOverlay.setAttribute("aria-hidden", "true");
@@ -5483,6 +5726,7 @@
         if (event.key === "Escape") {
           if (wireState) { wireState.preview.remove(); wireState = null; }
           cancelChemMenu();
+          closePalette();
           closeInspector();
           closeSugarInspector();
           closeFattyInspector();
@@ -5495,7 +5739,7 @@
       workspace.addEventListener("scroll", function () { cancelChemMenu(); drawBonds(); }, { passive: true });
       function handleMobileChange(event) {
         updatePaletteInteractionMode();
-        if (!event.matches) { cancelChemMenu(); closeInspector(); closeSugarInspector(); closeFattyInspector(); setStageScale(1); }
+        if (!event.matches) { cancelChemMenu(); closePalette(); closeInspector(); closeSugarInspector(); closeFattyInspector(); setStageScale(1); }
         else syncStageGeometry();
         drawBonds();
       }
