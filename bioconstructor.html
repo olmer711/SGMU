@@ -1904,18 +1904,48 @@
         display: grid;
       }
 
+      .sugar-palette .section-title { display: block; }
+      .sugar-palette > .section-title { display: none; }
+      .sugar-palette > .tip { display: block; }
+
       .sugar-palette .projection-buttons,
       .sugar-palette .sugar-type-buttons {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 18px;
       }
 
       .sugar-palette .carbon-count-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 18px;
+      }
+
+      .sugar-palette .carbon-count-grid .sugar-choice:last-child {
+        grid-column: 1 / -1;
       }
 
       .sugar-palette .haworth-scaffold-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 18px;
       }
+
+      .sugar-palette #fischerControls {
+        display: block;
+      }
+
+      .sugar-palette .sugar-choice {
+        min-height: 54px;
+        padding: 7px 8px;
+      }
+
+      .sugar-palette .sugar-choice strong { font-size: .9rem; }
+      .sugar-palette .sugar-choice span {
+        display: block;
+        margin-top: 3px;
+        color: #9fb3c7;
+        font-size: .66rem;
+      }
+
+      .sugar-palette .sugar-choice.active span { color: #c8fbf2; }
 
       .fatty-palette .fatty-preset-grid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
