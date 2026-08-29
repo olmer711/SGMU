@@ -1250,19 +1250,29 @@
       }
 
       .brand { min-width: 0; }
-      .brand h1 { font-size: .95rem; }
+      .brand h1 {
+        font-size: 0;
+        line-height: 1.1;
+      }
+
+      .brand h1::after {
+        content: "БиоКонструктор";
+        display: block;
+        font-size: 1.18rem;
+      }
       .brand p { display: none; }
 
       .toolbar {
         display: grid;
-        grid-template-columns: 1fr 1.15fr 48px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px;
         gap: 7px;
         width: 100%;
       }
 
       .toolbar .btn {
-        min-height: 46px;
-        padding: 5px 9px;
+        min-height: 44px;
+        padding: 5px 7px;
+        font-size: .84rem;
         line-height: 1.05;
         touch-action: manipulation;
       }
@@ -1319,20 +1329,32 @@
 
       .amino-preset-grid {
         display: flex;
-        gap: 6px;
+        gap: 10px;
         overflow-x: auto;
         overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
         scrollbar-width: thin;
       }
 
-      .amino-preset-group { min-width: 150px; }
-      .amino-preset-group-title { margin: 0 0 5px; font-size: .62rem; }
-      .amino-preset-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
-      .amino-preset-button { height: 38px; min-height: 38px; padding: 4px 5px; font-size: .63rem; }
+      .amino-preset-group {
+        flex: 0 0 100%;
+        min-width: 0;
+        scroll-snap-align: start;
+      }
+
+      .amino-preset-group-title { margin: 0 0 5px; font-size: .7rem; }
+      .amino-preset-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+      .amino-preset-button {
+        height: 40px;
+        min-height: 40px;
+        padding: 5px 7px;
+        font-size: .75rem;
+        line-height: 1.1;
+      }
 
       #stageSizer {
-        width: max(100%, 960px);
-        height: max(100%, 680px);
+        width: max(100%, 720px);
+        height: max(100%, 560px);
       }
 
       .palette {
@@ -1525,11 +1547,40 @@
         gap: 6px;
       }
 
-      .mode-tabs { width: 100%; margin: 0; }
-      .mode-tab { min-height: 38px; padding: 0 5px; font-size: .65rem; }
+      .mode-tabs {
+        width: 100%;
+        margin: 0;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 5px;
+      }
+
+      .mode-tab {
+        min-width: 0;
+        min-height: 44px;
+        padding: 4px 3px;
+        font-size: .72rem;
+        line-height: 1.08;
+        white-space: normal;
+      }
 
       #sugarToolbar,
-      #fattyToolbar { grid-template-columns: 1fr 1.15fr 1fr 48px; }
+      #fattyToolbar { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px; }
+
+      #sugarToolbar .mobile-info-btn,
+      #fattyToolbar .mobile-info-btn { grid-column: 3; grid-row: 1; }
+
+      #sugarToolbar > .btn:nth-child(3),
+      #fattyToolbar > .btn:nth-child(3) {
+        grid-column: 1 / -1;
+        grid-row: 2;
+      }
+
+      #resetButton,
+      #sugarToolbar > .btn:nth-child(3),
+      #fattyToolbar > .btn:nth-child(3) {
+        min-height: 38px;
+        font-size: .76rem;
+      }
 
       .sugar-layout {
         grid-template-columns: 1fr;
@@ -2807,8 +2858,8 @@
           furthestX = Math.max(furthestX, node.x + logicalNodeWidth(node) + 80);
           furthestY = Math.max(furthestY, node.y + logicalNodeHeight(node) + 80);
         });
-        stageBaseWidth = Math.max(stageBaseWidth, 960, workspace.clientWidth, furthestX);
-        stageBaseHeight = Math.max(stageBaseHeight, 680, workspace.clientHeight, furthestY);
+        stageBaseWidth = Math.max(stageBaseWidth, isMobileMode() ? 720 : 960, workspace.clientWidth, furthestX);
+        stageBaseHeight = Math.max(stageBaseHeight, isMobileMode() ? 560 : 680, workspace.clientHeight, furthestY);
         stage.style.width = stageBaseWidth + "px";
         stage.style.height = stageBaseHeight + "px";
         stage.style.transform = "scale(" + stageScale + ")";
@@ -3547,8 +3598,8 @@
         selectedId = null;
         nextNodeId = 1;
         bondsSvg.innerHTML = "";
-        stageBaseWidth = Math.max(960, workspace.clientWidth || 0);
-        stageBaseHeight = Math.max(680, workspace.clientHeight || 0);
+        stageBaseWidth = Math.max(isMobileMode() ? 720 : 960, workspace.clientWidth || 0);
+        stageBaseHeight = Math.max(isMobileMode() ? 560 : 680, workspace.clientHeight || 0);
         syncStageGeometry();
       }
 
@@ -3847,8 +3898,8 @@
         var maxX = Math.max.apply(null, positions.map(function (point) { return point.x; }));
         var minY = Math.min.apply(null, positions.map(function (point) { return point.y; }));
         var maxY = Math.max.apply(null, positions.map(function (point) { return point.y; }));
-        stageBaseWidth = Math.max(960, workspace.clientWidth || 0, maxX - minX + 260);
-        stageBaseHeight = Math.max(680, workspace.clientHeight || 0, maxY - minY + 220);
+        stageBaseWidth = Math.max(isMobileMode() ? 720 : 960, workspace.clientWidth || 0, maxX - minX + 260);
+        stageBaseHeight = Math.max(isMobileMode() ? 560 : 680, workspace.clientHeight || 0, maxY - minY + 220);
         syncStageGeometry();
         var offsetX = stageBaseWidth / 2 - (minX + maxX) / 2;
         var offsetY = stageBaseHeight / 2 - (minY + maxY) / 2;
