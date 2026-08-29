@@ -1210,6 +1210,7 @@
     .mobile-info-btn,
     .mobile-action-btn,
     .mobile-palette-button,
+    .mobile-inspector-button,
     .mobile-drawer-head,
     .drawer-head,
     .mobile-tools,
@@ -1229,7 +1230,7 @@
       .brand p { display: none; }
     }
 
-    @media (max-width: 720px), (pointer: coarse) and (max-width: 900px) {
+    @media (max-width: 1200px), (pointer: coarse) and (hover: none) {
       body {
         min-height: 100dvh;
         overflow: hidden;
@@ -1253,14 +1254,8 @@
 
       .brand { min-width: 0; }
       .brand h1 {
-        font-size: 0;
+        font-size: .95rem;
         line-height: 1.1;
-      }
-
-      .brand h1::after {
-        content: "БиоКонструктор";
-        display: block;
-        font-size: 1.18rem;
       }
       .brand p { display: none; }
 
@@ -1695,7 +1690,7 @@
       .fatty-svg { height: 350px; }
     }
 
-    @media (orientation: portrait) and (max-width: 900px) {
+    @media (max-width: 1200px), (pointer: coarse) and (hover: none) {
       #aminoLayout,
       .sugar-layout,
       .fatty-layout {
@@ -1730,6 +1725,38 @@
       }
 
       .mobile-palette-button[aria-expanded="true"] {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .mobile-inspector-button {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        z-index: 135;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        min-height: 102px;
+        padding: 10px 5px;
+        border: 1px solid #a78bfa;
+        border-right: 0;
+        border-radius: 13px 0 0 13px;
+        background: #4c1d95;
+        color: #f5f3ff;
+        box-shadow: 0 8px 24px rgba(0,0,0,.32);
+        cursor: pointer;
+        font-size: .72rem;
+        font-weight: 850;
+        line-height: 1.1;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        transform: translateY(-50%);
+        touch-action: manipulation;
+      }
+
+      .mobile-inspector-button[aria-expanded="true"] {
         opacity: 0;
         pointer-events: none;
       }
@@ -2216,6 +2243,7 @@
   </div>
 
   <button class="mobile-palette-button" id="mobilePaletteButton" type="button" aria-label="Открыть панель аминокислот" aria-expanded="false">Аминокислоты</button>
+  <button class="mobile-inspector-button" id="mobileInspectorButton" type="button" aria-label="Открыть задание и проверку" aria-expanded="false">Задание</button>
   <button class="drawer-backdrop" id="drawerBackdrop" type="button" aria-label="Закрыть панель" hidden></button>
   <button class="drawer-backdrop" id="sugarDrawerBackdrop" type="button" aria-label="Закрыть панель сахаридов" hidden></button>
   <button class="drawer-backdrop" id="fattyDrawerBackdrop" type="button" aria-label="Закрыть панель жирных кислот" hidden></button>
@@ -2862,6 +2890,7 @@
       var closeInspectorButton = document.getElementById("closeInspectorButton");
       var drawerBackdrop = document.getElementById("drawerBackdrop");
       var mobilePaletteButton = document.getElementById("mobilePaletteButton");
+      var mobileInspectorButton = document.getElementById("mobileInspectorButton");
       var aminoPalette = document.querySelector(".amino-presets");
       var sugarPalette = document.querySelector(".sugar-palette");
       var fattyPalette = document.querySelector(".fatty-palette");
@@ -2872,7 +2901,7 @@
       var toast = document.getElementById("toast");
       var welcomeOverlay = document.getElementById("welcomeOverlay");
       var welcomeCloseButton = document.getElementById("welcomeCloseButton");
-      var mobileQuery = window.matchMedia("(max-width: 720px), (pointer: coarse) and (max-width: 900px)");
+      var mobileQuery = window.matchMedia("(max-width: 1200px), (pointer: coarse) and (hover: none)");
       var aminoLayout = document.getElementById("aminoLayout");
       var sugarLayout = document.getElementById("sugarLayout");
       var fattyLayout = document.getElementById("fattyLayout");
@@ -3048,15 +3077,19 @@
         });
         stageBaseWidth = Math.max(stageBaseWidth, isMobileMode() ? 720 : 960, workspace.clientWidth, furthestX);
         stageBaseHeight = Math.max(stageBaseHeight, isMobileMode() ? 560 : 680, workspace.clientHeight, furthestY);
+        var visualStageWidth = stageBaseWidth * stageScale;
+        var visualStageHeight = stageBaseHeight * stageScale;
         stage.style.width = stageBaseWidth + "px";
         stage.style.height = stageBaseHeight + "px";
+        stage.style.left = (isMobileMode() ? Math.max(0, (workspace.clientWidth - visualStageWidth) / 2) : 0) + "px";
+        stage.style.top = (isMobileMode() ? Math.max(0, (workspace.clientHeight - visualStageHeight) / 2) : 0) + "px";
         stage.style.transform = "scale(" + stageScale + ")";
-        stageSizer.style.width = Math.max(workspace.clientWidth, stageBaseWidth * stageScale) + "px";
-        stageSizer.style.height = Math.max(workspace.clientHeight, stageBaseHeight * stageScale) + "px";
+        stageSizer.style.width = Math.max(workspace.clientWidth, visualStageWidth) + "px";
+        stageSizer.style.height = Math.max(workspace.clientHeight, visualStageHeight) + "px";
       }
 
       function setStageScale(value) {
-        stageScale = clamp(value, .55, 2.25);
+        stageScale = clamp(value, isMobileMode() ? .2 : .55, 2.25);
         syncStageGeometry();
         drawBonds();
       }
@@ -3088,6 +3121,22 @@
         var label = activeMode === "sugar" ? "Редактирование" : activeMode === "fatty" ? "Цепь" : "Аминокислоты";
         mobilePaletteButton.textContent = label;
         mobilePaletteButton.setAttribute("aria-label", "Открыть панель: " + label);
+      }
+
+      function updateInspectorButtonState(isOpen) {
+        mobileInspectorButton.setAttribute("aria-expanded", String(Boolean(isOpen)));
+      }
+
+      function openActiveInspector() {
+        if (activeMode === "sugar") openSugarInspector();
+        else if (activeMode === "fatty") openFattyInspector();
+        else openInspector();
+      }
+
+      function closeActiveInspector() {
+        closeInspector();
+        closeSugarInspector();
+        closeFattyInspector();
       }
 
       function openPalette() {
@@ -3124,6 +3173,7 @@
         inspector.classList.add("open");
         drawerBackdrop.classList.add("open");
         mobileInfoButton.setAttribute("aria-expanded", "true");
+        updateInspectorButtonState(true);
       }
 
       function closeInspector() {
@@ -3131,6 +3181,7 @@
         drawerBackdrop.classList.remove("open");
         drawerBackdrop.hidden = true;
         mobileInfoButton.setAttribute("aria-expanded", "false");
+        updateInspectorButtonState(false);
       }
 
       function clearTapWire() {
@@ -3792,6 +3843,7 @@
         updateNodeLabels();
         drawBonds();
         if (nodes.size) setStatus("info", "Структура изменена", nodes.size + " атомов, " + edges.length + " связей. Нажмите «Проверить».");
+        scheduleMobileAssemblyFit();
       }
 
       function flashInvalid(node) {
@@ -4101,7 +4153,49 @@
         return null;
       }
 
+      function getAminoBounds(visibleNodes) {
+        return {
+          minX: Math.min.apply(null, visibleNodes.map(function (node) { return node.x; })),
+          minY: Math.min.apply(null, visibleNodes.map(function (node) { return node.y; })),
+          maxX: Math.max.apply(null, visibleNodes.map(function (node) { return node.x + logicalNodeWidth(node); })),
+          maxY: Math.max.apply(null, visibleNodes.map(function (node) { return node.y + logicalNodeHeight(node); }))
+        };
+      }
+
+      function fitMobileAminoAssemblyIntoView(nodeIds) {
+        if (!isMobileMode() || activeMode !== "amino" || loadingAminoPreset) return;
+        var visibleNodes = (nodeIds ? nodeIds.map(function (id) { return nodes.get(id); }) : Array.from(nodes.values())).filter(Boolean);
+        if (!visibleNodes.length || !workspace.clientWidth || !workspace.clientHeight) return;
+        var bounds = getAminoBounds(visibleNodes);
+        var contentWidth = Math.max(1, bounds.maxX - bounds.minX);
+        var contentHeight = Math.max(1, bounds.maxY - bounds.minY);
+        var padding = clamp(Math.round(Math.min(workspace.clientWidth, workspace.clientHeight) * .07), 18, 32);
+        var usableWidth = Math.max(1, workspace.clientWidth - padding * 2);
+        var usableHeight = Math.max(1, workspace.clientHeight - padding * 2);
+        var scale = Math.min(1, usableWidth / contentWidth, usableHeight / contentHeight);
+
+        setStageScale(scale);
+
+        var scaledStageWidth = stageBaseWidth * stageScale;
+        var scaledStageHeight = stageBaseHeight * stageScale;
+        var contentCenterX = (bounds.minX + bounds.maxX) / 2 * stageScale;
+        var contentCenterY = (bounds.minY + bounds.maxY) / 2 * stageScale;
+        var maxScrollLeft = Math.max(0, scaledStageWidth - workspace.clientWidth);
+        var maxScrollTop = Math.max(0, scaledStageHeight - workspace.clientHeight);
+        workspace.scrollLeft = clamp(contentCenterX - workspace.clientWidth / 2, 0, maxScrollLeft);
+        workspace.scrollTop = clamp(contentCenterY - workspace.clientHeight / 2, 0, maxScrollTop);
+      }
+
+      function scheduleMobileAssemblyFit() {
+        if (!isMobileMode() || activeMode !== "amino" || loadingAminoPreset || !nodes.size) return;
+        fitMobileAminoAssemblyIntoView();
+      }
+
       function fitPresetIntoView(nodeIds) {
+        if (isMobileMode()) {
+          fitMobileAminoAssemblyIntoView(nodeIds);
+          return;
+        }
         var visibleNodes = nodeIds.map(function (id) { return nodes.get(id); }).filter(Boolean);
         if (!visibleNodes.length) return;
         var minX = Math.min.apply(null, visibleNodes.map(function (node) { return node.x; }));
@@ -4162,7 +4256,8 @@
         selectAminoPresetButton(id);
         setStatus("info", acid.name, "Готовая структура загружена. Её можно изменять или сразу проверить.");
         var fitAction = function () { fitPresetIntoView(nodeIds); };
-        if (window.requestAnimationFrame) window.requestAnimationFrame(fitAction); else fitAction();
+        if (isMobileMode()) fitAction();
+        else if (window.requestAnimationFrame) window.requestAnimationFrame(fitAction); else fitAction();
         showToast("Загружена: " + acid.name);
       }
 
@@ -4387,12 +4482,14 @@
         sugarDrawerBackdrop.hidden = false;
         requestAnimationFrame(function () { sugarDrawerBackdrop.classList.add("open"); });
         sugarMobileInfoButton.setAttribute("aria-expanded", "true");
+        updateInspectorButtonState(true);
       }
 
       function closeSugarInspector() {
         sugarInspector.classList.remove("open");
         sugarDrawerBackdrop.classList.remove("open");
         sugarMobileInfoButton.setAttribute("aria-expanded", "false");
+        updateInspectorButtonState(false);
         setTimeout(function () {
           if (!sugarDrawerBackdrop.classList.contains("open")) sugarDrawerBackdrop.hidden = true;
         }, 230);
@@ -4741,12 +4838,14 @@
         fattyDrawerBackdrop.hidden = false;
         requestAnimationFrame(function () { fattyDrawerBackdrop.classList.add("open"); });
         fattyMobileInfoButton.setAttribute("aria-expanded", "true");
+        updateInspectorButtonState(true);
       }
 
       function closeFattyInspector() {
         fattyInspector.classList.remove("open");
         fattyDrawerBackdrop.classList.remove("open");
         fattyMobileInfoButton.setAttribute("aria-expanded", "false");
+        updateInspectorButtonState(false);
         setTimeout(function () {
           if (!fattyDrawerBackdrop.classList.contains("open")) fattyDrawerBackdrop.hidden = true;
         }, 230);
@@ -5667,6 +5766,10 @@
         if (mobilePaletteButton.getAttribute("aria-expanded") === "true") closePalette();
         else openPalette();
       });
+      mobileInspectorButton.addEventListener("click", function () {
+        if (mobileInspectorButton.getAttribute("aria-expanded") === "true") closeActiveInspector();
+        else openActiveInspector();
+      });
       closeAminoPaletteButton.addEventListener("click", closePalette);
       closeSugarPaletteButton.addEventListener("click", closePalette);
       closeFattyPaletteButton.addEventListener("click", closePalette);
@@ -5735,12 +5838,12 @@
         if (activeMode === "amino" && event.key === "2") setBondOrder(2);
       });
 
-      window.addEventListener("resize", function () { cancelChemMenu(); syncStageGeometry(); drawBonds(); });
+      window.addEventListener("resize", function () { cancelChemMenu(); syncStageGeometry(); scheduleMobileAssemblyFit(); drawBonds(); });
       workspace.addEventListener("scroll", function () { cancelChemMenu(); drawBonds(); }, { passive: true });
       function handleMobileChange(event) {
         updatePaletteInteractionMode();
         if (!event.matches) { cancelChemMenu(); closePalette(); closeInspector(); closeSugarInspector(); closeFattyInspector(); setStageScale(1); }
-        else syncStageGeometry();
+        else { syncStageGeometry(); scheduleMobileAssemblyFit(); }
         drawBonds();
       }
       if (mobileQuery.addEventListener) mobileQuery.addEventListener("change", handleMobileChange);
