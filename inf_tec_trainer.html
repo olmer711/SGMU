@@ -239,6 +239,7 @@ const progressBar = document.getElementById('progress-bar');
 const progressText = document.getElementById('progress-text');
 const authorNote = document.getElementById('author-note');
 const menuContainer = document.getElementById('menu-container');
+const aboutTrainer = document.getElementById('about-trainer');
 const taskExtra = document.createElement('div');
 taskExtra.id = 'task-extra';
 answersUl.insertAdjacentElement('afterend', taskExtra);
@@ -267,7 +268,7 @@ function escapeHtml(value) { const node = document.createElement('span'); node.t
 function resetMenu() {
   currentSection = null; currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
   quizDiv.classList.add('hidden'); resultDiv.classList.add('hidden'); menuDiv.classList.remove('hidden'); menuDiv.style.display = 'grid';
-  authorNote.classList.remove('hidden'); menuContainer.classList.remove('hidden'); progressWrapper.classList.add('hidden');
+  authorNote.classList.remove('hidden'); menuContainer.classList.remove('hidden'); aboutTrainer.classList.remove('hidden'); progressWrapper.classList.add('hidden');
   gradeDiv.textContent = '';
 }
 function buildMenu() {
@@ -282,7 +283,7 @@ function buildMenu() {
 }
 function startSection(index) {
   currentSection = data[index]; currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
-  menuDiv.classList.add('hidden'); menuDiv.style.display = 'none'; authorNote.classList.add('hidden'); menuContainer.classList.add('hidden');
+  menuDiv.classList.add('hidden'); menuDiv.style.display = 'none'; authorNote.classList.add('hidden'); menuContainer.classList.add('hidden'); aboutTrainer.classList.add('hidden');
   resultDiv.classList.add('hidden'); quizDiv.classList.remove('hidden'); sectionTitle.textContent = currentSection.title;
   questionJump.classList.toggle('hidden', !SHOW_QUESTION_PICKER);
   finishBtn.classList.remove('hidden'); progressWrapper.classList.remove('hidden'); progressBar.style.width = '0%'; progressText.textContent = '0 / ' + currentSection.questions.length; if (SHOW_QUESTION_PICKER) buildQuestionList(); showQuestion();
@@ -412,10 +413,10 @@ function grade(percent) {
   return 2;
 }
 function showResult() {
-  quizDiv.classList.add('hidden'); resultDiv.classList.remove('hidden'); const total = currentSection.questions.length; const percent = Math.round(score / total * 100);
+  quizDiv.classList.add('hidden'); resultDiv.classList.remove('hidden'); aboutTrainer.classList.add('hidden'); const total = currentSection.questions.length; const percent = Math.round(score / total * 100);
   resultDiv.querySelector('h2').textContent = 'Результат'; scoreDiv.textContent = `${score} / ${total} (${percent} %)`; progressWrapper.classList.add('hidden'); gradeDiv.textContent = `Оценка: ${grade(percent)}`; retryBtn.classList.remove('hidden'); finishBtn.classList.add('hidden');
 }
-finishBtn.addEventListener('click', () => { quizDiv.classList.add('hidden'); resultDiv.classList.remove('hidden'); progressWrapper.classList.add('hidden'); const percent = questionsAttempted ? Math.round(score / questionsAttempted * 100) : 0; resultDiv.querySelector('h2').textContent = 'Тест завершён. Результат'; scoreDiv.textContent = `${score} / ${questionsAttempted} (${percent} %)`; gradeDiv.textContent = `Оценка: ${grade(percent)}`; retryBtn.classList.add('hidden'); finishBtn.classList.add('hidden'); });
+finishBtn.addEventListener('click', () => { quizDiv.classList.add('hidden'); resultDiv.classList.remove('hidden'); aboutTrainer.classList.add('hidden'); progressWrapper.classList.add('hidden'); const percent = questionsAttempted ? Math.round(score / questionsAttempted * 100) : 0; resultDiv.querySelector('h2').textContent = 'Тест завершён. Результат'; scoreDiv.textContent = `${score} / ${questionsAttempted} (${percent} %)`; gradeDiv.textContent = `Оценка: ${grade(percent)}`; retryBtn.classList.add('hidden'); finishBtn.classList.add('hidden'); });
 retryBtn.addEventListener('click', () => startSection(0));
 menuBtn.addEventListener('click', resetMenu); menuBtn2.addEventListener('click', resetMenu);
 buildMenu();
