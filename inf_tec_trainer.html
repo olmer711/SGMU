@@ -573,6 +573,11 @@ checkBtn.addEventListener('click', () => {
   } else {
     const input = document.getElementById('text-answer'); if (!input.value.trim()) { alert('Пожалуйста, введите ответ.'); return; }
     isCorrect = normalise(input.value) === normalise(q.answer); input.disabled = true; input.classList.add(isCorrect ? 'correct' : 'incorrect');
+    if (!isCorrect) {
+      const correctAnswer = document.createElement('div'); correctAnswer.className = 'answer-line';
+      correctAnswer.textContent = `Правильный ответ: ${Array.isArray(q.answer) ? q.answer.join(', ') : q.answer}`;
+      taskExtra.appendChild(correctAnswer);
+    }
   }
   markResult(isCorrect);
 });
