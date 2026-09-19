@@ -146,10 +146,19 @@
     #submenu-actions button { font-size: 1em; }
     #submenu-actions button.input-section { background-color: #fff4f4; border-color: #e4bcbc; }
     #submenu-actions button.output-section { background-color: #f3f7ff; border-color: #bdcce5; }
-    #submenu-menu-btn,
-    #answers-menu-btn { display: block; margin: 18px auto 0; }
-    #answers-view h2 { margin-top: 0; }
-    #answers-scroll { height: min(68vh, 720px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; padding: 0 6px 8px 0; }
+    #submenu-menu-btn { display: block; margin: 18px auto 0; }
+    #answers-view {
+        height: calc(100vh - 120px);
+        height: calc(100dvh - 120px);
+        box-sizing: border-box;
+        padding-bottom: calc(15px + env(safe-area-inset-bottom));
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+    #answers-view h2 { flex: 0 0 auto; margin: 0 0 10px; }
+    #answers-scroll { flex: 1 1 auto; min-height: 0; height: auto; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; padding: 0 6px 8px 0; }
+    #answers-menu-btn { display: block; flex: 0 0 auto; margin: 12px auto 0; }
     .answer-question { margin: 0 0 24px; padding: 0 0 16px; border-bottom: 1px solid #ddd; }
     .answer-question:last-child { border-bottom: 0; }
     .answer-question .question-text { margin-bottom: 10px; }
