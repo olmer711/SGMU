@@ -133,6 +133,36 @@
 
 
 
+    /* Section submenu and answer view */
+    #section-submenu,
+    #answers-view {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 15px;
+    }
+    #section-submenu { text-align: center; }
+    #section-submenu h2 { margin-top: 0; }
+    #submenu-actions { display: flex; flex-direction: column; align-items: stretch; max-width: 520px; margin: 0 auto; }
+    #submenu-actions button { font-size: 1em; }
+    #submenu-actions button.input-section { background-color: #fff4f4; border-color: #e4bcbc; }
+    #submenu-actions button.output-section { background-color: #f3f7ff; border-color: #bdcce5; }
+    #submenu-menu-btn,
+    #answers-menu-btn { display: block; margin: 18px auto 0; }
+    #answers-view h2 { margin-top: 0; }
+    #answers-scroll { height: min(68vh, 720px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; padding: 0 6px 8px 0; }
+    .answer-question { margin: 0 0 24px; padding: 0 0 16px; border-bottom: 1px solid #ddd; }
+    .answer-question:last-child { border-bottom: 0; }
+    .answer-question .question-text { margin-bottom: 10px; }
+    .answer-options li.correct-answer { color: green; background-color: #eaf7ee; border-color: green; font-weight: bold; }
+    .answer-options li { display: block; }
+    .answer-line { color: green; font-weight: bold; margin-top: 8px; }
+    .answer-match { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; align-items: center; margin: 6px 0; padding: 7px; border: 1px solid #ccc; border-radius: 4px; }
+    .answer-match-right { color: green; font-weight: bold; }
+    .answer-image { position: relative; display: inline-block; max-width: 100%; line-height: 0; }
+    .answer-image img { max-width: 100%; height: auto; display: block; }
+    .answer-region { position: absolute; inset: 0; background: rgba(76, 175, 80, 0.25); border: 2px solid rgba(46, 125, 50, 0.9); box-sizing: border-box; pointer-events: none; }
+    .answer-order .order-item { cursor: default; }
+
 
 </style>
 </head>
@@ -174,6 +204,21 @@
     <!-- Section menu is shown directly on the start screen. -->
     <div id="menu-container" style="max-width: 900px; margin-left: auto; margin-right: auto;">
         <div id="menu"></div>
+        <div id="section-submenu" class="hidden">
+            <h2 id="submenu-title"></h2>
+            <div id="submenu-actions">
+                <button id="start-section-btn">Пройти тест</button>
+                <button id="show-answers-btn">Правильные ответы</button>
+            </div>
+            <button id="submenu-menu-btn">Вернуться к списку тестов</button>
+        </div>
+        <div id="answers-view" class="hidden">
+            <h2 id="answers-title"></h2>
+            <div id="answers-scroll">
+                <div id="answers-content"></div>
+            </div>
+            <button id="answers-menu-btn">Вернуться к списку тестов</button>
+        </div>
     </div>
 <div id="quiz" class="hidden">
     <h2 id="section-title"></h2>
@@ -218,6 +263,7 @@ let checked = false;
 let orderState = [];
 let draggedOrderIndex = null;
 let chosenPoint = null;
+let selectedSectionIndex = null;
 
 const menuDiv = document.getElementById('menu');
 const quizDiv = document.getElementById('quiz');
@@ -247,6 +293,15 @@ taskExtra.id = 'task-extra';
 answersUl.insertAdjacentElement('afterend', taskExtra);
 const questionJump = document.getElementById('question-jump');
 const questionList = document.getElementById('question-list');
+const sectionSubmenu = document.getElementById('section-submenu');
+const submenuTitle = document.getElementById('submenu-title');
+const startSectionButton = document.getElementById('start-section-btn');
+const showAnswersButton = document.getElementById('show-answers-btn');
+const submenuMenuButton = document.getElementById('submenu-menu-btn');
+const answersView = document.getElementById('answers-view');
+const answersTitle = document.getElementById('answers-title');
+const answersContent = document.getElementById('answers-content');
+const answersMenuButton = document.getElementById('answers-menu-btn');
 
 function buildQuestionList() {
   questionList.innerHTML = '';
@@ -282,10 +337,12 @@ copyPhoneButton.addEventListener('click', async () => {
   }
 });
 function resetMenu() {
-  currentSection = null; currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
-  quizDiv.classList.add('hidden'); resultDiv.classList.add('hidden'); menuDiv.classList.remove('hidden'); menuDiv.style.display = 'grid';
+  currentSection = null; selectedSectionIndex = null; currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
+  quizDiv.classList.add('hidden'); resultDiv.classList.add('hidden'); answersView.classList.add('hidden'); sectionSubmenu.classList.add('hidden');
+  menuDiv.classList.remove('hidden'); menuDiv.style.display = 'grid';
   authorNote.classList.remove('hidden'); menuContainer.classList.remove('hidden'); aboutTrainer.classList.remove('hidden'); progressWrapper.classList.add('hidden');
   gradeDiv.textContent = '';
+  window.scrollTo(0, 0);
 }
 function buildMenu() {
   menuDiv.innerHTML = '';
@@ -293,16 +350,97 @@ function buildMenu() {
     const button = document.createElement('button');
     button.textContent = section.title;
     button.className = section.title.toLowerCase().startsWith('входной') ? 'input-section' : 'output-section';
-    button.addEventListener('click', () => startSection(index));
+    button.addEventListener('click', () => openSectionMenu(index));
     menuDiv.appendChild(button);
   });
 }
+function openSectionMenu(index) {
+  selectedSectionIndex = index;
+  const section = data[index];
+  submenuTitle.textContent = section.title;
+  const sectionClass = section.title.toLowerCase().startsWith('входной') ? 'input-section' : 'output-section';
+  startSectionButton.className = sectionClass;
+  showAnswersButton.className = sectionClass;
+  menuDiv.classList.add('hidden'); menuDiv.style.display = 'none';
+  progressWrapper.classList.add('hidden');
+  quizDiv.classList.add('hidden'); resultDiv.classList.add('hidden'); answersView.classList.add('hidden');
+  sectionSubmenu.classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
 function startSection(index) {
+  selectedSectionIndex = index;
   currentSection = data[index]; currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
+  sectionSubmenu.classList.add('hidden'); answersView.classList.add('hidden');
   menuDiv.classList.add('hidden'); menuDiv.style.display = 'none'; authorNote.classList.add('hidden'); menuContainer.classList.add('hidden'); aboutTrainer.classList.add('hidden');
   resultDiv.classList.add('hidden'); quizDiv.classList.remove('hidden'); sectionTitle.textContent = currentSection.title;
   questionJump.classList.toggle('hidden', !SHOW_QUESTION_PICKER);
   finishBtn.classList.remove('hidden'); progressWrapper.classList.remove('hidden'); progressBar.style.width = '0%'; progressText.textContent = '0 / ' + currentSection.questions.length; if (SHOW_QUESTION_PICKER) buildQuestionList(); showQuestion();
+}
+function renderAnswerImage(q, target) {
+  const holder = document.createElement('div'); holder.className = 'answer-image';
+  const img = document.createElement('img'); img.alt = 'Изображение к вопросу'; img.src = `data:image/webp;base64,${images[q.imageId]}`;
+  holder.appendChild(img); target.appendChild(holder);
+  const drawRegions = () => {
+    const width = img.naturalWidth || 1; const height = img.naturalHeight || 1;
+    (q.regions || []).forEach(region => {
+      const points = [...String(region).matchAll(/\((-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\)/g)];
+      if (points.length < 3) return;
+      const overlay = document.createElement('i'); overlay.className = 'answer-region';
+      overlay.style.clipPath = `polygon(${points.map(point => `${Number(point[1]) / width * 100}% ${Number(point[2]) / height * 100}%`).join(', ')})`;
+      holder.appendChild(overlay);
+    });
+  };
+  img.addEventListener('load', drawRegions, { once: true });
+  if (img.complete && img.naturalWidth) drawRegions();
+}
+function renderAnswerQuestion(q, index) {
+  const article = document.createElement('article'); article.className = 'answer-question';
+  const text = document.createElement('div'); text.className = 'question-text';
+  text.innerHTML = `<strong>${index + 1}. </strong>${escapeHtml(q.text).replace(/\n/g, '<br>')}`;
+  article.appendChild(text);
+  if (q.type === 'TYPE_TASK_CHOICE_SINGLE' || q.type === 'TYPE_TASK_CHOICE_MULTIPLE') {
+    const list = document.createElement('ul'); list.className = 'answers answer-options';
+    q.options.forEach(option => {
+      const item = document.createElement('li'); item.textContent = option.text;
+      if (option.correct) item.classList.add('correct-answer');
+      list.appendChild(item);
+    });
+    article.appendChild(list);
+  } else if (q.type === 'TYPE_TASK_CHOICE_ORDER') {
+    const list = document.createElement('ol'); list.className = 'order-list answer-order';
+    [...q.items].sort((a, b) => a.order - b.order).forEach(item => {
+      const row = document.createElement('li'); row.className = 'order-item correct'; row.textContent = item.text; list.appendChild(row);
+    });
+    article.appendChild(list);
+  } else if (q.type === 'TYPE_TASK_CHOICE_COLLATION') {
+    q.left.forEach(left => {
+      const row = document.createElement('div'); row.className = 'answer-match';
+      const leftText = document.createElement('span'); leftText.textContent = left.text;
+      const arrow = document.createElement('span'); arrow.textContent = '→';
+      const rightText = document.createElement('span'); rightText.className = 'answer-match-right'; rightText.textContent = q.right[left.match] ?? '';
+      row.append(leftText, arrow, rightText); article.appendChild(row);
+    });
+  } else if (q.type === 'TYPE_TASK_IMAGE_POINT') {
+    renderAnswerImage(q, article);
+  } else {
+    const answer = document.createElement('div'); answer.className = 'answer-line';
+    answer.textContent = `Ответ: ${Array.isArray(q.answer) ? q.answer.join(', ') : q.answer}`;
+    article.appendChild(answer);
+  }
+  return article;
+}
+function showAnswers(index) {
+  selectedSectionIndex = index;
+  const section = data[index];
+  currentSection = section;
+  menuDiv.classList.add('hidden'); menuDiv.style.display = 'none';
+  authorNote.classList.add('hidden'); aboutTrainer.classList.add('hidden'); progressWrapper.classList.add('hidden');
+  quizDiv.classList.add('hidden'); resultDiv.classList.add('hidden'); sectionSubmenu.classList.add('hidden');
+  answersTitle.textContent = `${section.title} — правильные ответы`;
+  answersContent.innerHTML = '';
+  section.questions.forEach((question, indexInSection) => answersContent.appendChild(renderAnswerQuestion(question, indexInSection)));
+  answersView.classList.remove('hidden');
+  window.scrollTo(0, 0);
 }
 function showQuestion() {
   const q = currentSection.questions[currentQuestionIndex];
@@ -440,8 +578,11 @@ function showResult() {
   resultDiv.querySelector('h2').textContent = 'Результат'; scoreDiv.textContent = `${score} / ${total} (${percent} %)`; progressWrapper.classList.add('hidden'); gradeDiv.textContent = `Оценка: ${grade(percent)}`; retryBtn.classList.remove('hidden'); finishBtn.classList.add('hidden');
 }
 finishBtn.addEventListener('click', () => { quizDiv.classList.add('hidden'); resultDiv.classList.remove('hidden'); aboutTrainer.classList.add('hidden'); progressWrapper.classList.add('hidden'); const percent = questionsAttempted ? Math.round(score / questionsAttempted * 100) : 0; resultDiv.querySelector('h2').textContent = 'Тест завершён. Результат'; scoreDiv.textContent = `${score} / ${questionsAttempted} (${percent} %)`; gradeDiv.textContent = `Оценка: ${grade(percent)}`; retryBtn.classList.add('hidden'); finishBtn.classList.add('hidden'); });
-retryBtn.addEventListener('click', () => startSection(0));
+retryBtn.addEventListener('click', () => startSection(selectedSectionIndex ?? 0));
 menuBtn.addEventListener('click', resetMenu); menuBtn2.addEventListener('click', resetMenu);
+startSectionButton.addEventListener('click', () => { if (selectedSectionIndex !== null) startSection(selectedSectionIndex); });
+showAnswersButton.addEventListener('click', () => { if (selectedSectionIndex !== null) showAnswers(selectedSectionIndex); });
+submenuMenuButton.addEventListener('click', resetMenu); answersMenuButton.addEventListener('click', resetMenu);
 buildMenu();
 
 </script>
