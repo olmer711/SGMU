@@ -336,15 +336,6 @@ function buildMainMenu() {
   menuDiv.appendChild(button);
 }
 
-function parseQuestionRange(value) {
-  const match = value.trim().match(/^(\d+)\s*-\s*(\d+)$/);
-  if (!match) return null;
-  const start = Number(match[1]);
-  const end = Number(match[2]);
-  if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1 || end > allQuestions.length || start > end) return null;
-  return { start, end };
-}
-
 function createRangeAction() {
   const wrapper = document.createElement('div');
   wrapper.className = 'range-action';
@@ -352,9 +343,6 @@ function createRangeAction() {
   const input = document.createElement('input');
   input.id = 'range-input';
   input.type = 'text';
-  input.inputMode = 'text';
-  input.autocomplete = 'off';
-  input.spellcheck = false;
   input.placeholder = `1-${allQuestions.length}`;
   input.setAttribute('aria-label', 'Диапазон вопросов');
 
@@ -364,14 +352,30 @@ function createRangeAction() {
   button.textContent = 'Сформировать тест в диапазоне';
 
   const submit = () => {
-    const range = parseQuestionRange(input.value);
-    if (!range) {
-      alert(`Введите диапазон в формате 1-${allQuestions.length}, например 10-25.`);
+    const value = input.value.trim();
+    const inputStr = value.length > 0 ? value : input.placeholder;
+    const match = inputStr.match(/^\s*(\d+)\s*-\s*(\d+)\s*$/);
+    if (!match) {
+      alert('Введите диапазон в формате “start-end”, например 1-100.');
       input.focus();
       return;
     }
-    const factory = () => allQuestions.filter(question => question.number >= range.start && question.number <= range.end);
-    startQuiz(factory(), factory, `Коллоквиум 1. Белки — вопросы ${range.start}–${range.end}`);
+    let start = parseInt(match[1], 10);
+    let end = parseInt(match[2], 10);
+    if (start > end) [start, end] = [end, start];
+
+    const minQuestion = 1;
+    const maxQuestion = allQuestions.length;
+    if (end < minQuestion || start > maxQuestion) {
+      alert(`Диапазон вне допустимых границ ${minQuestion}-${maxQuestion}.`);
+      input.focus();
+      return;
+    }
+    if (start < minQuestion) start = minQuestion;
+    if (end > maxQuestion) end = maxQuestion;
+
+    const factory = () => allQuestions.filter(question => question.number >= start && question.number <= end);
+    startQuiz(factory(), factory, `Коллоквиум 1. Белки — вопросы ${start}–${end}`);
   };
 
   button.addEventListener('click', submit);
