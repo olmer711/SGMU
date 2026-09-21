@@ -133,6 +133,10 @@
     #menu-container, #quiz, #result, #all-questions-view { box-sizing: border-box; }
     #menu { grid-template-columns: repeat(3, 1fr); }
     #menu button { min-height: 54px; }
+    .range-action { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .range-action input { box-sizing: border-box; width: min(180px, 100%); min-height: 54px; padding: 10px; font: inherit; border: 1px solid #999; border-radius: 2px; }
+    .range-action input::placeholder { color: #999; opacity: 1; }
+    .range-action button { margin-top: 0; }
     .menu-back-link { grid-column: 1 / -1; justify-self: center; margin-top: 2px; color: #555; cursor: pointer; text-decoration: underline; }
     #all-questions-view { max-width: 900px; margin: 20px auto; padding: 15px; }
     #all-questions-scroll { max-height: calc(100vh - 190px); overflow-y: auto; padding: 4px 8px 14px 2px; }
@@ -148,6 +152,8 @@
     @media (max-width: 650px) {
       #menu { grid-template-columns: 1fr; padding: 12px; gap: 10px; }
       #menu button { min-height: 48px; }
+      .range-action { flex-direction: column; align-items: stretch; }
+      .range-action input, .range-action button { width: 100%; }
       #quiz, #result, #all-questions-view { margin: 12px auto; padding: 10px; }
       #all-questions-scroll { max-height: calc(100vh - 170px); padding-right: 3px; }
     }
@@ -213,8 +219,15 @@ const encodedData = 'eyJ0aXRsZSI6ItCa0L7Qu9C70L7QutCy0LjRg9C8IDEuINCR0LXQu9C60Lg
 const questionData = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(encodedData), c => c.charCodeAt(0))));
 const allQuestions = questionData.questions;
 
+const question39 = allQuestions.find(question => question.number === 39);
+if (question39) {
+  question39.type = 'multi';
+  question39.options.forEach((option, index) => { option.correct = index < 3; });
+}
+
 let currentRun = [];
 let runFactory = () => allQuestions.slice();
+let currentRunTitle = '';
 let currentQuestionIndex = 0;
 let score = 0;
 let questionsAttempted = 0;
@@ -305,11 +318,55 @@ function buildMainMenu() {
   menuDiv.appendChild(button);
 }
 
+function parseQuestionRange(value) {
+  const match = value.trim().match(/^(\d+)\s*-\s*(\d+)$/);
+  if (!match) return null;
+  const start = Number(match[1]);
+  const end = Number(match[2]);
+  if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1 || end > allQuestions.length || start > end) return null;
+  return { start, end };
+}
+
+function createRangeAction() {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'range-action';
+
+  const input = document.createElement('input');
+  input.id = 'range-input';
+  input.type = 'text';
+  input.inputMode = 'numeric';
+  input.placeholder = `1-${allQuestions.length}`;
+  input.setAttribute('aria-label', 'Диапазон вопросов');
+
+  const button = document.createElement('button');
+  button.id = 'range-submit';
+  button.className = 'output-section';
+  button.textContent = 'Сформировать тест в диапазоне';
+
+  const submit = () => {
+    const range = parseQuestionRange(input.value);
+    if (!range) {
+      alert(`Введите диапазон в формате 1-${allQuestions.length}, например 10-25.`);
+      input.focus();
+      return;
+    }
+    const factory = () => allQuestions.filter(question => question.number >= range.start && question.number <= range.end);
+    startQuiz(factory(), factory, `Коллоквиум 1. Белки — вопросы ${range.start}–${range.end}`);
+  };
+
+  button.addEventListener('click', submit);
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Enter') submit();
+  });
+  wrapper.append(input, button);
+  return wrapper;
+}
+
 function buildColloquiumMenu() {
   menuDiv.innerHTML = '';
   const actions = [
-    ['Сформировать полный тест', () => startQuiz(allQuestions.slice(), () => allQuestions.slice())],
-    ['Сформировать тест из 25 вопросов', () => startQuiz(secureShuffle(allQuestions).slice(0, 25), () => secureShuffle(allQuestions).slice(0, 25))],
+    ['Сформировать полный тест', () => startQuiz(allQuestions.slice(), () => allQuestions.slice(), 'Коллоквиум 1. Белки — полный тест')],
+    ['Сформировать тест из 25 вопросов', () => startQuiz(secureShuffle(allQuestions).slice(0, 25), () => secureShuffle(allQuestions).slice(0, 25), 'Коллоквиум 1. Белки — 25 случайных вопросов')],
     ['Показать все вопросы', showAllQuestions]
   ];
   actions.forEach(([label, action]) => {
@@ -319,6 +376,7 @@ function buildColloquiumMenu() {
     button.addEventListener('click', action);
     menuDiv.appendChild(button);
   });
+  menuDiv.appendChild(createRangeAction());
   const back = document.createElement('a');
   back.href = '#';
   back.className = 'menu-back-link';
@@ -345,9 +403,10 @@ function resetMenu() {
   window.scrollTo(0, 0);
 }
 
-function startQuiz(questions, factory) {
+function startQuiz(questions, factory, title) {
   currentRun = questions;
   runFactory = factory;
+  currentRunTitle = title || (currentRun.length === 25 ? 'Коллоквиум 1. Белки — 25 случайных вопросов' : 'Коллоквиум 1. Белки — полный тест');
   currentQuestionIndex = 0;
   score = 0;
   questionsAttempted = 0;
@@ -357,7 +416,7 @@ function startQuiz(questions, factory) {
   allQuestionsView.classList.add('hidden');
   resultDiv.classList.add('hidden');
   quizDiv.classList.remove('hidden');
-  sectionTitle.textContent = currentRun.length === 25 ? 'Коллоквиум 1. Белки — 25 случайных вопросов' : 'Коллоквиум 1. Белки — полный тест';
+  sectionTitle.textContent = currentRunTitle;
   finishBtn.classList.remove('hidden');
   progressWrapper.classList.remove('hidden');
   progressBar.style.width = '0%';
@@ -502,7 +561,7 @@ function showAllQuestions() {
   window.scrollTo(0, 0);
 }
 
-retryBtn.addEventListener('click', () => startQuiz(runFactory(), runFactory));
+retryBtn.addEventListener('click', () => startQuiz(runFactory(), runFactory, currentRunTitle));
 menuBtn.addEventListener('click', resetMenu);
 menuBtn2.addEventListener('click', resetMenu);
 allMenuBtn.addEventListener('click', resetMenu);
