@@ -243,6 +243,24 @@ if (question50) {
   question50.options.forEach((option, index) => { option.correct = [2, 4].includes(index); });
 }
 
+const question139 = allQuestions.find(question => question.number === 139);
+if (question139) {
+  question139.type = 'multi';
+  question139.options.forEach((option, index) => { option.correct = [0, 3, 4].includes(index); });
+}
+
+const question159 = allQuestions.find(question => question.number === 159);
+if (question159) {
+  question159.type = 'multi';
+  question159.options.forEach((option, index) => { option.correct = [0, 1, 3].includes(index); });
+}
+
+const question167 = allQuestions.find(question => question.number === 167);
+if (question167) {
+  question167.type = 'multi';
+  question167.options.forEach((option, index) => { option.correct = [4, 5].includes(index); });
+}
+
 let currentRun = [];
 let runFactory = () => allQuestions.slice();
 let currentRunTitle = '';
