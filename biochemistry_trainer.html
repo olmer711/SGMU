@@ -225,6 +225,24 @@ if (question39) {
   question39.options.forEach((option, index) => { option.correct = index < 3; });
 }
 
+const question44 = allQuestions.find(question => question.number === 44);
+if (question44) {
+  question44.type = 'multi';
+  question44.options.forEach((option, index) => { option.correct = [0, 2, 4].includes(index); });
+}
+
+const question45 = allQuestions.find(question => question.number === 45);
+if (question45) {
+  question45.type = 'multi';
+  question45.options.forEach((option, index) => { option.correct = [0, 1, 2, 4].includes(index); });
+}
+
+const question50 = allQuestions.find(question => question.number === 50);
+if (question50) {
+  question50.type = 'multi';
+  question50.options.forEach((option, index) => { option.correct = [2, 4].includes(index); });
+}
+
 let currentRun = [];
 let runFactory = () => allQuestions.slice();
 let currentRunTitle = '';
