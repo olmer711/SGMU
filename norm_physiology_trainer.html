@@ -355,9 +355,9 @@ function buildFileGroupMenu(group, parentSection) {
 
   const grid = document.createElement('div');
   grid.className = 'file-test-grid';
-  group.fileGroups.forEach(fileGroup => {
+  group.fileGroups.forEach((fileGroup, fileIndex) => {
     const button = document.createElement('button');
-    button.textContent = fileGroup.title;
+    button.textContent = `Вопрос ${fileIndex + 1}`;
     button.className = 'output-section';
     button.addEventListener('click', () => startQuiz(fileGroup));
     grid.appendChild(button);
