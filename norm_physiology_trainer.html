@@ -336,6 +336,19 @@ function buildGroupMenu(section) {
   backButton.addEventListener('click', buildMenu);
   menuDiv.appendChild(backButton);
 }
+function createCompositeQuiz(group, previousQuestions = null) {
+  let selected;
+  let attempts = 0;
+  do {
+    selected = group.fileGroups.map(fileGroup => {
+      const questions = fileGroup.questions;
+      return questions[Math.floor(Math.random() * questions.length)];
+    });
+    attempts++;
+  } while (previousQuestions && attempts < 50 && selected.every((question, index) => question === previousQuestions[index]));
+  return { title: group.title + ' — 25 вопросов', questions: selected, compositeSource: group };
+}
+
 function buildFileGroupMenu(group, parentSection) {
   menuDiv.innerHTML = '';
   const wrapper = document.createElement('div');
@@ -345,11 +358,7 @@ function buildFileGroupMenu(group, parentSection) {
   compositeButton.textContent = 'Запустить тест из 25 вопросов';
   compositeButton.className = 'menu-composite';
   compositeButton.addEventListener('click', () => {
-    const selected = group.fileGroups.map(fileGroup => {
-      const questions = fileGroup.questions;
-      return questions[Math.floor(Math.random() * questions.length)];
-    });
-    startQuiz({ title: group.title + ' — 25 вопросов', questions: selected });
+    startQuiz(createCompositeQuiz(group));
   });
   wrapper.appendChild(compositeButton);
 
@@ -589,7 +598,13 @@ function showResult() {
   resultDiv.querySelector('h2').textContent = 'Результат'; scoreDiv.textContent = `${score} / ${total} (${percent} %)`; progressWrapper.classList.add('hidden'); gradeDiv.textContent = `Оценка: ${grade(percent)}`; retryBtn.classList.remove('hidden'); finishBtn.classList.add('hidden');
 }
 finishBtn.addEventListener('click', () => { quizDiv.classList.add('hidden'); resultDiv.classList.remove('hidden'); aboutTrainer.classList.add('hidden'); progressWrapper.classList.add('hidden'); const percent = questionsAttempted ? Math.round(score / questionsAttempted * 100) : 0; resultDiv.querySelector('h2').textContent = 'Тест завершён. Результат'; scoreDiv.textContent = `${score} / ${questionsAttempted} (${percent} %)`; gradeDiv.textContent = `Оценка: ${grade(percent)}`; retryBtn.classList.add('hidden'); finishBtn.classList.add('hidden'); });
-retryBtn.addEventListener('click', () => startQuiz(currentSection));
+retryBtn.addEventListener('click', () => {
+  if (currentSection && currentSection.compositeSource) {
+    startQuiz(createCompositeQuiz(currentSection.compositeSource, currentSection.questions));
+  } else {
+    startQuiz(currentSection);
+  }
+});
 menuBtn.addEventListener('click', resetMenu); menuBtn2.addEventListener('click', resetMenu);
 allQuestionsBack.addEventListener('click', () => { allQuestionsView.classList.add('hidden'); allQuestionsScroll.innerHTML = ''; menuContainer.classList.remove('hidden'); menuDiv.classList.remove('hidden'); menuDiv.style.display = 'grid'; authorNote.classList.remove('hidden'); aboutTrainer.classList.remove('hidden'); buildFileGroupMenu(currentAllQuestionsGroup, currentAllQuestionsParent); });
 buildMenu();
