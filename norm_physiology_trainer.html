@@ -304,12 +304,19 @@ copyPhoneButton.addEventListener('click', async () => {
     copyStatus.textContent = 'Не удалось скопировать номер';
   }
 });
-function resetMenu() {
+let parentMenuBuilder = null;
+
+function showMenu(builder = buildMenu) {
   currentSection = null; currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
   allQuestionsView.classList.add('hidden'); allQuestionsScroll.innerHTML = '';
   quizDiv.classList.add('hidden'); resultDiv.classList.add('hidden'); menuDiv.classList.remove('hidden'); menuDiv.style.display = 'grid';
   authorNote.classList.remove('hidden'); menuContainer.classList.remove('hidden'); aboutTrainer.classList.remove('hidden'); progressWrapper.classList.add('hidden');
-  gradeDiv.textContent = ''; buildMenu();
+  gradeDiv.textContent = ''; parentMenuBuilder = null; builder();
+}
+function resetMenu() { showMenu(buildMenu); }
+function returnToParentMenu() {
+  const builder = parentMenuBuilder || buildMenu;
+  showMenu(builder);
 }
 function buildMenu() {
   menuDiv.innerHTML = '';
@@ -327,7 +334,7 @@ function buildGroupMenu(section) {
     const button = document.createElement('button');
     button.textContent = group.updated ? `${group.title} *` : group.title;
     button.className = group.updated ? 'output-section updated-test' : 'output-section';
-    button.addEventListener('click', () => group.fileGroups ? buildFileGroupMenu(group, section) : startQuiz(group));
+    button.addEventListener('click', () => group.fileGroups ? buildFileGroupMenu(group, section) : startQuiz(group, () => buildGroupMenu(section)));
     menuDiv.appendChild(button);
   });
   const backButton = document.createElement('button');
@@ -358,7 +365,7 @@ function buildFileGroupMenu(group, parentSection) {
   compositeButton.textContent = 'Запустить тест из 25 вопросов';
   compositeButton.className = 'menu-composite';
   compositeButton.addEventListener('click', () => {
-    startQuiz(createCompositeQuiz(group));
+    startQuiz(createCompositeQuiz(group), () => buildFileGroupMenu(group, parentSection));
   });
   wrapper.appendChild(compositeButton);
 
@@ -368,7 +375,7 @@ function buildFileGroupMenu(group, parentSection) {
     const button = document.createElement('button');
     button.textContent = `Вопрос ${fileIndex + 1}`;
     button.className = 'output-section';
-    button.addEventListener('click', () => startQuiz(fileGroup));
+    button.addEventListener('click', () => startQuiz(fileGroup, () => buildFileGroupMenu(group, parentSection)));
     grid.appendChild(button);
   });
   wrapper.appendChild(grid);
@@ -446,11 +453,11 @@ function showAllQuestions(group, parentSection) {
 function startSection(index) {
   const section = data[index];
   if (section.groups) { buildGroupMenu(section); return; }
-  startQuiz(section);
+  startQuiz(section, buildMenu);
 }
-function startQuiz(section) {
+function startQuiz(section, returnMenuBuilder = buildMenu) {
   allQuestionsView.classList.add('hidden'); allQuestionsScroll.innerHTML = '';
-  currentSection = section; currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
+  parentMenuBuilder = returnMenuBuilder; currentSection = section; currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
   menuDiv.classList.add('hidden'); menuDiv.style.display = 'none'; authorNote.classList.add('hidden'); menuContainer.classList.add('hidden'); aboutTrainer.classList.add('hidden');
   resultDiv.classList.add('hidden'); quizDiv.classList.remove('hidden'); sectionTitle.textContent = currentSection.title;
   questionJump.classList.toggle('hidden', !SHOW_QUESTION_PICKER);
@@ -599,13 +606,14 @@ function showResult() {
 }
 finishBtn.addEventListener('click', () => { quizDiv.classList.add('hidden'); resultDiv.classList.remove('hidden'); aboutTrainer.classList.add('hidden'); progressWrapper.classList.add('hidden'); const percent = questionsAttempted ? Math.round(score / questionsAttempted * 100) : 0; resultDiv.querySelector('h2').textContent = 'Тест завершён. Результат'; scoreDiv.textContent = `${score} / ${questionsAttempted} (${percent} %)`; gradeDiv.textContent = `Оценка: ${grade(percent)}`; retryBtn.classList.add('hidden'); finishBtn.classList.add('hidden'); });
 retryBtn.addEventListener('click', () => {
+  const returnMenuBuilder = parentMenuBuilder || buildMenu;
   if (currentSection && currentSection.compositeSource) {
-    startQuiz(createCompositeQuiz(currentSection.compositeSource, currentSection.questions));
+    startQuiz(createCompositeQuiz(currentSection.compositeSource, currentSection.questions), returnMenuBuilder);
   } else {
-    startQuiz(currentSection);
+    startQuiz(currentSection, returnMenuBuilder);
   }
 });
-menuBtn.addEventListener('click', resetMenu); menuBtn2.addEventListener('click', resetMenu);
+menuBtn.addEventListener('click', returnToParentMenu); menuBtn2.addEventListener('click', returnToParentMenu);
 allQuestionsBack.addEventListener('click', () => { allQuestionsView.classList.add('hidden'); allQuestionsScroll.innerHTML = ''; menuContainer.classList.remove('hidden'); menuDiv.classList.remove('hidden'); menuDiv.style.display = 'grid'; authorNote.classList.remove('hidden'); aboutTrainer.classList.remove('hidden'); buildFileGroupMenu(currentAllQuestionsGroup, currentAllQuestionsParent); });
 buildMenu();
 
