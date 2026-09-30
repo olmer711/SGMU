@@ -108,7 +108,7 @@
         <h1>Тренажер по гистологии. Ткани</h1>
     </header>
 
-    <!-- Progress bar (visible only for generated tests) -->
+    <!-- Progress bar (visible during any test) -->
     <div id="progress-wrapper" class="hidden" style="max-width: 900px; margin: 0 auto; padding-top: 10px;">
         <div id="progress-container" style="display: flex; align-items: center;">
             <div id="progress-bar-container" style="flex: 1; background-color: #e0e0e0; border-radius: 5px; height: 10px;">
@@ -728,9 +728,9 @@ const showAllBtn = document.getElementById('show-all-btn');
 // Container where all questions and answers will be rendered
 const allQuestionsDiv = document.getElementById('all-questions');
 
-// Update progress bar for generated tests
+// Update progress bar for all test modes
 function updateProgress() {
-    if (currentSection && currentSection.title === 'Сформированный тест') {
+    if (currentSection && currentSection.questions && currentSection.questions.length > 0) {
         const total = currentSection.questions.length;
         const pct = total ? (questionsAttempted / total) * 100 : 0;
         progressBar.style.width = pct + '%';
@@ -770,8 +770,10 @@ function startSection(index) {
     finishBtn.classList.remove('hidden');
     // Clear any previous grade message
     gradeDiv.textContent = '';
-    // Hide progress bar for regular sections
-    progressWrapper.classList.add('hidden');
+    // Show and reset progress bar for the selected section
+    progressWrapper.classList.remove('hidden');
+    progressBar.style.width = '0%';
+    progressText.textContent = '0 / ' + currentSection.questions.length;
     showQuestion();
 }
 
@@ -1081,6 +1083,14 @@ menuBtn2.addEventListener('click', () => {
     menuContainer.classList.remove('hidden');
 });
 retryBtn.addEventListener('click', () => {
+    if (currentSection && currentSection.title === 'Сформированный тест') {
+        startGeneratedTest();
+        return;
+    }
+    if (currentSection && currentSection.title === 'Случайный тест') {
+        startRandomTest(currentSection.questions.length);
+        return;
+    }
     currentQuestionIndex = 0;
     score = 0;
     questionsAttempted = 0;
@@ -1090,8 +1100,8 @@ retryBtn.addEventListener('click', () => {
     finishBtn.classList.remove('hidden');
     // Clear any previous grade message
     gradeDiv.textContent = '';
-    // If currently in generated test, show and reset progress bar
-    if (currentSection && currentSection.title === 'Сформированный тест') {
+    // Show and reset progress bar for the current test
+    if (currentSection && currentSection.questions && currentSection.questions.length > 0) {
         progressWrapper.classList.remove('hidden');
         progressBar.style.width = '0%';
         progressText.textContent = '0 / ' + currentSection.questions.length;

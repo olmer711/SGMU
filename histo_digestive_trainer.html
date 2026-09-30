@@ -618,6 +618,14 @@ menuBtn2.addEventListener('click', () => {
     menuContainer.classList.remove('hidden');
 });
 retryBtn.addEventListener('click', () => {
+    if (currentSection && currentSection.title === 'Сформированный тест') {
+        startGeneratedTest();
+        return;
+    }
+    if (currentSection && currentSection.title === 'Случайный тест') {
+        startRandomTest(currentSection.questions.length);
+        return;
+    }
     currentQuestionIndex = 0;
     score = 0;
     questionsAttempted = 0;
