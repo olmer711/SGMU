@@ -236,6 +236,14 @@ const otherEnzymeQuestions = otherEnzymeQuestionData.questions;
 const thirdOxidationQuestions = thirdOxidationQuestionData.questions;
 enzymeQuestions.splice(31, 32);
 enzymeQuestions.forEach((question, index) => { question.number = index + 1; });
+const enzymeActivatorsQuestion = enzymeQuestions.find(question => question.text === 'Активаторами ферментов являются');
+if (enzymeActivatorsQuestion) {
+  enzymeActivatorsQuestion.options.forEach(option => { option.correct = true; });
+}
+const enzymeActiveCenterRadicalsQuestion = enzymeQuestions.find(question => question.text.startsWith('Активный центр фермента имеет сложную пространственную структуру. Радикалы каких аминокислот'));
+if (enzymeActiveCenterRadicalsQuestion) {
+  enzymeActiveCenterRadicalsQuestion.options[4].correct = false;
+}
 const enzymeQuestion17 = enzymeQuestions.find(question => question.number === 17);
 if (enzymeQuestion17) {
   enzymeQuestion17.options.forEach((option, index) => { option.correct = index === 0; });
