@@ -234,6 +234,16 @@ const proteinQuestions = proteinQuestionData.questions;
 const enzymeQuestions = enzymeQuestionData.questions;
 const otherEnzymeQuestions = otherEnzymeQuestionData.questions;
 const thirdOxidationQuestions = thirdOxidationQuestionData.questions;
+enzymeQuestions.splice(31, 32);
+enzymeQuestions.forEach((question, index) => { question.number = index + 1; });
+const enzymeQuestion17 = enzymeQuestions.find(question => question.number === 17);
+if (enzymeQuestion17) {
+  enzymeQuestion17.options.forEach((option, index) => { option.correct = index === 0; });
+}
+const enzymeQuestion23 = enzymeQuestions.find(question => question.number === 23);
+if (enzymeQuestion23) {
+  enzymeQuestion23.options.forEach((option, index) => { option.correct = index === 2; });
+}
 const otherTestQuestion3 = otherEnzymeQuestions.find(question => question.number === 3);
 if (otherTestQuestion3) {
   otherTestQuestion3.options[0].text = 'Образуется из витамина В6';
