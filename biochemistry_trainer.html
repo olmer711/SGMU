@@ -253,6 +253,10 @@ const otherTestQuestion27 = otherEnzymeQuestions.find(question => question.numbe
 if (otherTestQuestion27) {
   otherTestQuestion27.options.forEach((option, index) => { option.correct = index === 1; });
 }
+const otherTestQuestion33 = otherEnzymeQuestions.find(question => question.number === 33);
+if (otherTestQuestion33) {
+  otherTestQuestion33.options.forEach((option, index) => { option.correct = index < 4; });
+}
 const colloquiums = [
   { title: 'Коллоквиум 1. Белки', questions: proteinQuestions },
   { title: 'Коллоквиум 2. Ферменты', questions: enzymeQuestions },
