@@ -239,6 +239,10 @@ if (otherTestQuestion3) {
   otherTestQuestion3.options[0].text = 'Образуется из витамина В6';
   otherTestQuestion3.options[1].text = otherTestQuestion3.options[1].text.replace(/^6\s+/, '');
 }
+const otherTestQuestion27 = otherEnzymeQuestions.find(question => question.number === 27);
+if (otherTestQuestion27) {
+  otherTestQuestion27.options.forEach((option, index) => { option.correct = index === 1; });
+}
 const colloquiums = [
   { title: 'Коллоквиум 1. Белки', questions: proteinQuestions },
   { title: 'Коллоквиум 2. Ферменты', questions: enzymeQuestions },
