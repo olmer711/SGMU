@@ -240,6 +240,10 @@ const enzymeActivatorsQuestion = enzymeQuestions.find(question => question.text 
 if (enzymeActivatorsQuestion) {
   enzymeActivatorsQuestion.options.forEach(option => { option.correct = true; });
 }
+const enzymeActiveCenterPartsQuestion = enzymeQuestions.find(question => question.text === 'В состав активного центра фермента выделяют функциональные участки:');
+if (enzymeActiveCenterPartsQuestion) {
+  enzymeActiveCenterPartsQuestion.options.forEach((option, index) => { option.correct = index === 0 || index === 2; });
+}
 const enzymeActiveCenterRadicalsQuestion = enzymeQuestions.find(question => question.text.startsWith('Активный центр фермента имеет сложную пространственную структуру. Радикалы каких аминокислот'));
 if (enzymeActiveCenterRadicalsQuestion) {
   enzymeActiveCenterRadicalsQuestion.options[4].correct = false;
