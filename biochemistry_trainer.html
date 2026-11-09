@@ -325,6 +325,12 @@ if (oxidationQuestion116) {
   oxidationQuestion116.options.forEach((option, index) => { option.correct = [0, 3].includes(index); });
 }
 
+const alphaKetoglutarateQuestion = thirdOxidationQuestions.find(question => question.text === 'Превращение α-кетоглутарата в сукцинил-КоА в ЦТК:');
+if (alphaKetoglutarateQuestion) {
+  alphaKetoglutarateQuestion.type = 'multi';
+  alphaKetoglutarateQuestion.options.forEach((option, index) => { option.correct = [0, 3].includes(index); });
+}
+
 let currentRun = [];
 let runFactory = () => allQuestions.slice();
 let currentRunTitle = '';
