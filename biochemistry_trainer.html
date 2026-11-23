@@ -241,6 +241,71 @@ const carbohydrateQuestions = carbohydrateQuestionData.questions.map(([number, t
   type: type === 'multi' || correct.length > 1 ? 'multi' : 'single',
   options: optionTexts.map((optionText, index) => ({ text: optionText, correct: correct.includes(index + 1) }))
 }));
+const carbohydrateQ2 = carbohydrateQuestions.find(question => question.number === 2);
+if (carbohydrateQ2) carbohydrateQ2.options.forEach((option, index) => { option.correct = index < 3; });
+const carbohydrateQ42 = carbohydrateQuestions.find(question => question.number === 42);
+if (carbohydrateQ42) carbohydrateQ42.options.forEach((option, index) => { option.correct = index === 0; });
+const carbohydrateQ44 = carbohydrateQuestions.find(question => question.number === 44);
+if (carbohydrateQ44) {
+  carbohydrateQ44.options[0].text = 'содержания в клетке витамина В₆';
+  carbohydrateQ44.options[1].text = 'интенсивности транспорта O₂ в митохондрии клетки';
+  carbohydrateQ44.options[2].text = 'соотношения АТФ/АДФ в клетке';
+  carbohydrateQ44.options[3].text = 'соотношения NADPH/NADP⁺';
+}
+const carbohydrateQ50 = carbohydrateQuestions.find(question => question.number === 50);
+if (carbohydrateQ50) {
+  carbohydrateQ50.options[0].text = 'предельное окисление до CO₂ и H₂O - основной путь катаболизма глюкозы у аэробных организмов';
+  carbohydrateQ50.options[1].text = 'предельное окисление до CO₂ и H₂O - основной путь катаболизма глюкозы у анаэробных организмов';
+  carbohydrateQ50.options[2].text = 'является основным поставщиком энергии для процессов жизнедеятельности организма';
+}
+const carbohydrateQ61 = carbohydrateQuestions.find(question => question.number === 61);
+if (carbohydrateQ61) {
+  carbohydrateQ61.options[2].text = 'на этапе (Ацетил-КоА → CO₂+H₂O) синтезируется 24 моль АТФ';
+  carbohydrateQ61.options[3].text = 'выход АТФ при окислении 1 моль глюкозы до CO₂ и H₂O составляет 36 - 38 моль АТФ';
+}
+const carbohydrateQ65 = carbohydrateQuestions.find(question => question.number === 65);
+if (carbohydrateQ65) {
+  carbohydrateQ65.options[2].text = 'превращается в пируват (при доступности кислорода), который вступает в общий путь катаболизма, окисляясь до CO₂ и H₂O';
+  carbohydrateQ65.options[3].text = 'является акцептором водорода в цитозольной реакции, обеспечивая регенерацию NAD⁺';
+}
+const carbohydrateQ75 = carbohydrateQuestions.find(question => question.number === 75);
+if (carbohydrateQ75) {
+  carbohydrateQ75.text = 'NAD⁺ В АЭРОБНОМ ГЛИКОЛИЗЕ:';
+  carbohydrateQ75.options[0].text = 'регенерирует в ЦПЭ при участии глицерофосфатного челнока';
+  carbohydrateQ75.options[2].text = 'содержит витамины В₆ и В₂';
+  carbohydrateQ75.options[3].text = 'кофермент цитозольной глицеральдегид-3-фосфатдегидрогеназы';
+}
+const carbohydrateQ109 = carbohydrateQuestions.find(question => question.number === 109);
+if (carbohydrateQ109) {
+  carbohydrateQ109.options[1].text = 'CO₂, H₂O, АТФ';
+  carbohydrateQ109.options[2].text = 'ФАДН₂, CO₂, пентозофосфаты';
+  carbohydrateQ109.options[3].text = 'лактат, АТФ';
+}
+const carbohydrateQ118 = carbohydrateQuestions.find(question => question.number === 118);
+if (carbohydrateQ118) {
+  carbohydrateQ118.options[0].text = 'CO₂, H₂O, АТФ';
+  carbohydrateQ118.options[1].text = 'лактат, АТФ';
+  carbohydrateQ118.options[3].text = 'АТФ, CO₂, NH₃';
+}
+const carbohydrateQ157 = carbohydrateQuestions.find(question => question.number === 157);
+if (carbohydrateQ157) {
+  carbohydrateQ157.options[0].text = 'глюкоза, N-ацетилгалактозамин и остатки H₂SO₄';
+  carbohydrateQ157.options[1].text = 'идуроновая кислота, N-ацетилглюкозамин и остатки H₂SO₄';
+  carbohydrateQ157.options[3].text = 'глюкоронил, N-ацетилглюкозамин и остатки H₂SO₄';
+  carbohydrateQ157.options[4].text = 'глюкоронил, N-ацетилгалактозамин и остатки H₂SO₄';
+}
+const carbohydrateQ165 = carbohydrateQuestions.find(question => question.number === 165);
+if (carbohydrateQ165) {
+  carbohydrateQ165.text = 'КАКОЙ ФЕРМЕНТ КАТАЛИЗИРУЕТ РЕАКЦИЮ: (C₆H₁₀O₅)ₙ + Фн → (C₆H₁₀O₅)ₙ₋₁ + глюкозо-1-фосфат?';
+  carbohydrateQ165.options[0].text = 'амилаза';
+}
+const carbohydrateQ193 = carbohydrateQuestions.find(question => question.number === 193);
+if (carbohydrateQ193) {
+  carbohydrateQ193.options[0].text = 'глюкозо-6-фосфат + NADP⁺ → 6-фосфоглюконат + NADPH + H⁺';
+  carbohydrateQ193.options[1].text = 'ксилулозо-5-фосфат + рибозо-5-фосфат → 3ФГА + седогептулозо-7-фосфат';
+  carbohydrateQ193.options[2].text = '6-фосфоглюконат + NADP⁺ → рибулозо-5-фосфат + NADPH + H⁺ + CO₂';
+  carbohydrateQ193.options[3].text = '3ФГА + седогептулозо-7-фосфат → фруктозо-6-фосфат + эритрозо-4-фосфат';
+}
 enzymeQuestions.splice(31, 32);
 enzymeQuestions.forEach((question, index) => { question.number = index + 1; });
 const enzymeActivatorsQuestion = enzymeQuestions.find(question => question.text === 'Активаторами ферментов являются');
