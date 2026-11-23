@@ -241,6 +241,10 @@ const carbohydrateQuestions = carbohydrateQuestionData.questions.map(([number, t
   type: type === 'multi' || correct.length > 1 ? 'multi' : 'single',
   options: optionTexts.map((optionText, index) => ({ text: optionText, correct: correct.includes(index + 1) }))
 }));
+const carbohydrateQ10 = carbohydrateQuestions.find(question => question.number === 10);
+if (carbohydrateQ10) carbohydrateQ10.options.forEach((option, index) => { option.correct = index === 1 || index === 3; });
+const carbohydrateQ49 = carbohydrateQuestions.find(question => question.number === 49);
+if (carbohydrateQ49) carbohydrateQ49.type = 'single';
 const carbohydrateQ2 = carbohydrateQuestions.find(question => question.number === 2);
 if (carbohydrateQ2) carbohydrateQ2.options.forEach((option, index) => { option.correct = index < 3; });
 const carbohydrateQ42 = carbohydrateQuestions.find(question => question.number === 42);
