@@ -167,6 +167,12 @@
         min-height: 0;
     }
     #answers-view h2 { flex: 0 0 auto; margin: 0 0 10px; }
+    #answers-search-wrap { flex: 0 0 auto; margin: 0 0 12px; }
+    #answers-search-wrap label { display: block; margin: 0 0 5px; font-weight: 600; }
+    #answers-search { display: block; box-sizing: border-box; width: 100%; margin: 0; padding: 10px 12px; border: 1px solid #aaa; border-radius: 4px; font: inherit; font-size: 16px; }
+    #answers-search:focus { outline: 2px solid #4a78d0; outline-offset: 1px; }
+    #answers-search-empty { margin: 0 0 12px; color: #555; }
+    .answer-search-match { background: #ffeb3b; color: #111; border-radius: 2px; padding: 0 1px; }
     #answers-scroll { flex: 1 1 auto; min-height: 0; height: auto; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; padding: 0 6px 8px 0; }
     #answers-menu-btn { display: block; flex: 0 0 auto; margin: 12px auto 0; }
     #answers-view.hidden { display: none !important; }
@@ -252,7 +258,12 @@
         </div>
         <div id="answers-view" class="hidden">
             <h2 id="answers-title"></h2>
+            <div id="answers-search-wrap" class="hidden">
+                <label for="answers-search">Поиск по вопросу</label>
+                <input id="answers-search" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Введите текст вопроса" aria-label="Поиск по вопросу">
+            </div>
             <div id="answers-scroll">
+                <p id="answers-search-empty" class="hidden" role="status" aria-live="polite">Совпадений не найдено</p>
                 <div id="answers-content"></div>
             </div>
             <button id="answers-menu-btn">Вернуться к списку тестов</button>
@@ -340,6 +351,12 @@ const submenuMenuButton = document.getElementById('submenu-menu-btn');
 const answersView = document.getElementById('answers-view');
 const answersTitle = document.getElementById('answers-title');
 const answersContent = document.getElementById('answers-content');
+const answersSearchWrap = document.getElementById('answers-search-wrap');
+const answersSearchInput = document.getElementById('answers-search');
+const answersSearchEmpty = document.getElementById('answers-search-empty');
+const answersScroll = document.getElementById('answers-scroll');
+let finalAnswerQuestionRows = [];
+let finalAnswersSearchActive = false;
 const answersMenuButton = document.getElementById('answers-menu-btn');
 const finalTestLauncherWrap = document.getElementById('final-test-launcher-wrap');
 const finalTestLauncher = document.getElementById('final-test-launcher');
@@ -373,6 +390,102 @@ function markCurrentQuestion() {
 
 
 function escapeHtml(value) { const node = document.createElement('span'); node.textContent = value; return node.innerHTML; }
+function resetAnswersSearch() {
+  finalAnswersSearchActive = false;
+  finalAnswerQuestionRows = [];
+  answersSearchInput.value = '';
+  answersSearchWrap.classList.add('hidden');
+  answersSearchEmpty.classList.add('hidden');
+  answersSearchInput.blur();
+}
+
+const ANSWER_SEARCH_QUOTES = new Set(['\"', "'", '`', '\u00ab', '\u00bb', '\u2039', '\u203a', '\u2018', '\u2019', '\u201a', '\u201b', '\u201c', '\u201d', '\u201e', '\u201f', '\u2e02', '\u2e03', '\u2e04', '\u2e05', '\u2e09', '\u2e0a', '\u2e0c', '\u2e0d', '\u300c', '\u300d', '\u300e', '\u300f', '\u301d', '\u301e', '\u301f', '\uff02', '\uff07']);
+const ANSWER_SEARCH_DASHES = new Set(['\u2010', '\u2011', '\u2012', '\u2013', '\u2014', '\u2015', '\ufe58', '\ufe63', '\uff0d']);
+
+function normalizeSearchText(value) {
+  const source = String(value ?? '');
+  let text = '';
+  const starts = [];
+  const ends = [];
+  let whitespaceStart = -1;
+  let whitespaceEnd = -1;
+  const append = (chunk, start, end) => {
+    text += chunk;
+    for (let offset = 0; offset < chunk.length; offset++) { starts.push(start); ends.push(end); }
+  };
+  for (let index = 0; index < source.length;) {
+    const start = index;
+    const character = String.fromCodePoint(source.codePointAt(index));
+    index += character.length;
+    if (/\s/u.test(character)) {
+      if (whitespaceStart < 0) whitespaceStart = start;
+      whitespaceEnd = index;
+      continue;
+    }
+    if (whitespaceStart >= 0) {
+      if (text.length) append(' ', whitespaceStart, whitespaceEnd);
+      whitespaceStart = -1;
+      whitespaceEnd = -1;
+    }
+    let normalized = ANSWER_SEARCH_QUOTES.has(character) ? String.fromCharCode(34) : ANSWER_SEARCH_DASHES.has(character) ? '-' : character.toLocaleLowerCase('ru').replace(/ё/g, 'е');
+    append(normalized, start, index);
+  }
+  return { text, starts, ends };
+}
+
+function findQuestionMatches(value, normalizedQuery) {
+  if (!normalizedQuery) return [];
+  const normalized = normalizeSearchText(value);
+  const ranges = [];
+  let position = 0;
+  let found;
+  while ((found = normalized.text.indexOf(normalizedQuery, position)) !== -1) {
+    const start = normalized.starts[found];
+    const end = normalized.ends[found + normalizedQuery.length - 1];
+    if (start !== undefined && end !== undefined) ranges.push([start, end]);
+    position = found + normalizedQuery.length;
+  }
+  return ranges;
+}
+
+function appendQuestionText(target, value, ranges = []) {
+  const source = String(value ?? '');
+  const appendPlain = (parent, chunk) => {
+    const lines = chunk.split(/\r\n|\r|\n/);
+    lines.forEach((line, index) => {
+      if (index) parent.appendChild(document.createElement('br'));
+      if (line) parent.appendChild(document.createTextNode(line));
+    });
+  };
+  let cursor = 0;
+  ranges.forEach(([start, end]) => {
+    if (start < cursor || end < start) return;
+    appendPlain(target, source.slice(cursor, start));
+    const highlight = document.createElement('mark');
+    highlight.className = 'answer-search-match';
+    appendPlain(highlight, source.slice(start, end));
+    target.appendChild(highlight);
+    cursor = end;
+  });
+  appendPlain(target, source.slice(cursor));
+}
+
+function updateFinalAnswersSearch() {
+  if (!finalAnswersSearchActive) return;
+  const normalizedQuery = normalizeSearchText(answersSearchInput.value).text;
+  let visibleCount = 0;
+  finalAnswerQuestionRows.forEach(row => {
+    const ranges = normalizedQuery ? findQuestionMatches(row.question.text, normalizedQuery) : [];
+    const matches = !normalizedQuery || ranges.length > 0;
+    row.article.hidden = !matches;
+    if (!matches) return;
+    visibleCount++;
+    while (row.questionText.firstChild) row.questionText.removeChild(row.questionText.firstChild);
+    appendQuestionText(row.questionText, row.question.text, ranges);
+  });
+  answersSearchEmpty.classList.toggle('hidden', visibleCount > 0);
+  answersScroll.scrollTop = 0;
+}
 copyPhoneButton.addEventListener('click', async () => {
   const phone = '79206688904';
   try {
@@ -388,6 +501,7 @@ copyPhoneButton.addEventListener('click', async () => {
   }
 });
 function resetMenu() {
+  resetAnswersSearch();
   currentSection = null; selectedSectionIndex = null; currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
   quizDiv.classList.add('hidden'); resultDiv.classList.add('hidden'); answersView.classList.add('hidden'); sectionSubmenu.classList.add('hidden'); finalTestSubmenu.classList.add('hidden');
   finalTestLauncherWrap.classList.remove('hidden');
@@ -407,6 +521,7 @@ function buildMenu() {
   });
 }
 function openSectionMenu(index) {
+  resetAnswersSearch();
   selectedSectionIndex = index;
   finalTestLauncherWrap.classList.add('hidden'); finalTestSubmenu.classList.add('hidden');
   const section = data[index];
@@ -421,6 +536,7 @@ function openSectionMenu(index) {
   window.scrollTo(0, 0);
 }
 function startSection(index) {
+  resetAnswersSearch();
   selectedSectionIndex = index;
   currentSection = data[index]; currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
   sectionSubmenu.classList.add('hidden'); answersView.classList.add('hidden');
@@ -449,7 +565,10 @@ function renderAnswerImage(q, target) {
 function renderAnswerQuestion(q, index) {
   const article = document.createElement('article'); article.className = 'answer-question';
   const text = document.createElement('div'); text.className = 'question-text';
-  text.innerHTML = `<strong>${index + 1}. </strong>${escapeHtml(q.text).replace(/\n/g, '<br>')}`;
+  const number = document.createElement('strong'); number.textContent = `${index + 1}. `;
+  const questionText = document.createElement('span'); questionText.className = 'answer-question-text';
+  appendQuestionText(questionText, q.text);
+  text.append(number, questionText);
   appendFinalPromptImage(text, q);
   article.appendChild(text);
   if (q.type === 'TYPE_TASK_CHOICE_SINGLE' || q.type === 'TYPE_TASK_CHOICE_MULTIPLE') {
@@ -484,6 +603,7 @@ function renderAnswerQuestion(q, index) {
   return article;
 }
 function showAnswers(index) {
+  resetAnswersSearch();
   selectedSectionIndex = index;
   const section = data[index];
   currentSection = section;
@@ -660,6 +780,7 @@ showAnswersButton.addEventListener('click', () => { if (selectedSectionIndex !==
 submenuMenuButton.addEventListener('click', resetMenu); answersMenuButton.addEventListener('click', resetMenu);
 buildMenu();
 function openFinalTestMenu() {
+  resetAnswersSearch();
   selectedSectionIndex = null;
   menuDiv.classList.add('hidden'); menuDiv.style.display = 'none';
   finalTestLauncherWrap.classList.add('hidden');
@@ -671,6 +792,7 @@ function openFinalTestMenu() {
 }
 
 function startFinalTest(questions, title, isRandom = false) {
+  resetAnswersSearch();
   currentSection = { title, questions, isFinalTest: true, isRandomFinalTest: isRandom };
   currentQuestionIndex = 0; score = 0; questionsAttempted = 0;
   finalTestSubmenu.classList.add('hidden'); answersView.classList.add('hidden'); sectionSubmenu.classList.add('hidden');
@@ -685,6 +807,7 @@ function startFinalTest(questions, title, isRandom = false) {
 }
 
 function showFinalAnswers(questions, title) {
+  resetAnswersSearch();
   selectedSectionIndex = null;
   currentSection = { title, questions, isFinalTest: true };
   menuContainer.classList.remove('hidden');
@@ -694,8 +817,15 @@ function showFinalAnswers(questions, title) {
   quizDiv.classList.add('hidden'); resultDiv.classList.add('hidden'); sectionSubmenu.classList.add('hidden');
   answersTitle.textContent = `${title} — правильные ответы`;
   answersContent.innerHTML = '';
-  questions.forEach((question, index) => answersContent.appendChild(renderAnswerQuestion(question, index)));
+  questions.forEach((question, index) => {
+    const article = renderAnswerQuestion(question, index);
+    answersContent.appendChild(article);
+    finalAnswerQuestionRows.push({ question, article, questionText: article.querySelector('.answer-question-text') });
+  });
+  finalAnswersSearchActive = true;
+  answersSearchWrap.classList.remove('hidden');
   answersView.classList.remove('hidden');
+  updateFinalAnswersSearch();
   window.scrollTo(0, 0);
 }
 
@@ -733,6 +863,7 @@ finalTestLauncher.addEventListener('click', openFinalTestMenu);
 finalRandomButton.addEventListener('click', createRandomFinalTest);
 finalRangeButton.addEventListener('click', createRangedFinalTest);
 finalRangeInput.addEventListener('input', () => { finalRangeError.textContent = ''; });
+answersSearchInput.addEventListener('input', updateFinalAnswersSearch);
 finalAnswersButton.addEventListener('click', () => showFinalAnswers(finalQuestions, 'Итоговый тест'));
 finalSubmenuMenuButton.addEventListener('click', resetMenu);
 </script>
