@@ -739,7 +739,7 @@ checkBtn.addEventListener('click', () => {
     isCorrect = rows.every(row => row.querySelector('input').checked === (row.dataset.correct === 'true'));
     rows.forEach(row => { row.querySelector('input').disabled = true; if (row.dataset.correct === 'true') row.classList.add('correct'); else if (row.querySelector('input').checked) row.classList.add('incorrect'); });
   } else if (q.type === 'TYPE_TASK_CHOICE_ORDER') {
-    const rows = [...document.querySelectorAll('.order-item')]; isCorrect = rows.every((row, index) => Number(row.dataset.order) === index + 1);
+    const rows = [...document.querySelectorAll('#order-list .order-item')]; isCorrect = rows.every((row, index) => Number(row.dataset.order) === index + 1);
     rows.forEach((row, index) => row.classList.add(Number(row.dataset.order) === index + 1 ? 'correct' : 'incorrect'));
   } else if (q.type === 'TYPE_TASK_CHOICE_COLLATION') {
     const rows = [...answersUl.querySelectorAll('.match-row')]; isCorrect = rows.length > 0;
